@@ -1,0 +1,2880 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SISTEMA DE APONTAMENTO PCP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-industrial: #e5e7eb;
+            --panel-dark: #1a1a1a;
+            --accent-blue: #004a77;
+            --table-header-blue: #005a8d;
+        }
+
+        body {
+            background-color: var(--bg-industrial);
+            background-image: radial-gradient(#dee0e6);
+            background-size: 20px 20px;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        header {
+            background: linear-gradient(180deg, #2d2d2d 0%, #050505 100%);
+            border-bottom: 3px solid #000;
+            padding: 0.8rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+        }
+
+        .header-logo-container {
+            background: #fff;
+            padding: 4px 12px;
+            border-radius: 6px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .outer-rim {
+            position: relative;
+            width: 190px;
+            height: 190px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #888, #333);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 5px 10px 20px rgba(0, 0, 0, 0.4);
+            transition: transform 0.2s;
+        }
+
+        .outer-rim:hover {
+            transform: scale(1.05);
+        }
+
+        .screw {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #555;
+            border-radius: 2px;
+            box-shadow: inset 1px 1px 2px #000;
+        }
+
+        .s1 {
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .s2 {
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .s3 {
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .s4 {
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .inner-display {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: #000;
+            border: 4px solid #111;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .neon-ring {
+            position: absolute;
+            inset: 5px;
+            border-radius: 50%;
+            border: 2px solid var(--btn-color);
+            box-shadow: 0 0 10px var(--btn-color), inset 0 0 10px var(--btn-color);
+            opacity: 0.5;
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: scale(0.98);
+            }
+
+            50% {
+                opacity: 0.8;
+                transform: scale(1);
+            }
+        }
+
+        .btn-icon {
+            font-size: 2.5rem;
+            color: #fff;
+            text-shadow: 0 0 15px var(--btn-color);
+            z-index: 5;
+            margin-bottom: 4px;
+        }
+
+        .btn-text {
+            color: #fff;
+            font-size: 0.85rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            z-index: 5;
+        }
+
+        .c-pcp {
+            --btn-color: #4ade80;
+        }
+
+        .c-area {
+            --btn-color: #38bdf8;
+        }
+
+        .c-producao {
+            --btn-color: #8b5cf6;
+        }
+
+        .c-stop {
+            --btn-color: #f04040;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 4px;
+            padding: 1rem;
+            border-bottom: 4px solid #d1d5db;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-title {
+            font-size: 0.7rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.6rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stat-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 3px;
+            padding-bottom: 3px;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+
+        .stat-line:last-child {
+            border-bottom: none;
+        }
+
+        .stat-val {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #f1f5f9;
+        }
+
+        .stat-val1 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .stat-label {
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #94a3b8;
+        }
+
+        .stat-today {
+            border-bottom-color: #4ade80;
+        }
+
+        .stat-today .stat-title {
+            color: #166534;
+        }
+
+        .stat-week {
+            border-bottom-color: #38bdf8;
+        }
+
+        .stat-week .stat-title {
+            color: #075985;
+        }
+
+        .stat-month {
+            border-bottom-color: #8b5cf6;
+        }
+
+        .stat-month .stat-title {
+            color: #5b21b6;
+        }
+
+        .stat-unprioritized {
+            border-bottom-color: #f59e0b;
+        }
+
+        .stat-unprioritized .stat-title {
+            color: #92400e;
+        }
+
+        .cockpit-card {
+            background: white;
+            border-radius: 4px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .table-title-bar {
+            background: var(--table-header-blue);
+            color: white;
+            text-align: center;
+            padding: 6px 0;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            font-size: 0.75rem;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            max-height: 500px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.7rem;
+        }
+
+        th {
+            background: #f8fafc;
+            color: var(--accent-blue);
+            padding: 12px 8px;
+            text-transform: uppercase;
+            position: sticky;
+            top: 0;
+            z-index: 30;
+            white-space: nowrap;
+            border-bottom: 2px solid #e2e8f0;
+            font-weight: 800;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.2s;
+        }
+
+        th:hover {
+            background: #e2e8f0;
+        }
+
+        th .sort-icon {
+            margin-left: 5px;
+            opacity: 0.3;
+            font-size: 0.6rem;
+        }
+
+        th.active-sort .sort-icon {
+            opacity: 1;
+            color: #2563eb;
+        }
+
+        td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #f1f5f9;
+            text-align: center;
+            color: #334155;
+        }
+
+        tr:hover {
+            background-color: #f1f5f9;
+        }
+
+        .status-badge {
+            padding: 3px 8px;
+            border-radius: 9999px;
+            font-size: 0.6rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+
+        .loading-spinner {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .screen {
+            padding: 20px;
+        }
+
+        .cards-grid {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .card-setor {
+            background: #1f2937;
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            min-width: 140px;
+            transition: 0.2s;
+        }
+
+        .card-setor:hover {
+            transform: scale(1.05);
+            background: #374151;
+        }
+
+        .card-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .card-metrics {
+            font-size: 12px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filtros input {
+            padding: 8px;
+            width: 250px;
+            margin-bottom: 10px;
+        }
+
+        .tabela-container {
+            max-height: 400px;
+            overflow: auto;
+        }
+
+        #custom-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+
+        .badge-pendente {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .badge-producao {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        #import-progress-bar {
+            width: 300px;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 9999px;
+            margin-top: 12px;
+            overflow: hidden;
+        }
+
+        #import-progress-fill {
+            height: 100%;
+            background: #2563eb;
+            border-radius: 9999px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .industrial-container {
+            display: flex;
+            gap: 100px;
+            justify-content: center;
+
+        }
+
+        #menu-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 60px;
+            padding: 60px;
+            max-width: 1100px;
+            margin: 0 auto;
+            justify-items: center;
+            align-items: center;
+        }
+
+        .btn-box {
+            transition: transform 0.2s ease;
+        }
+
+        .btn-box:hover {
+            transform: scale(1.05);
+        }
+
+        .c-pcp {
+            --btn-color: #22c55e;
+        }
+
+        .c-area {
+            --btn-color: #0ea5e9;
+        }
+
+        .c-producao {
+            --btn-color: #7c3aed;
+        }
+
+        .c-stop {
+            --btn-color: #dc2626;
+        }
+
+        .c-access {
+            --btn-color: #f97316;
+        }
+
+        /* RESPONSIVO */
+        @media (max-width: 768px) {
+
+            #menu-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 25px;
+                padding: 25px 15px;
+            }
+
+            .outer-rim {
+                width: 140px;
+                height: 140px;
+            }
+
+            .inner-display {
+                width: 108px;
+                height: 108px;
+            }
+
+            .btn-icon {
+                font-size: 1.7rem;
+            }
+
+            .btn-text {
+                font-size: 0.72rem;
+            }
+
+            header {
+                flex-direction: column;
+                gap: 12px;
+                padding: 1rem;
+            }
+
+            header h1 {
+                font-size: 1.1rem;
+                text-align: center;
+            }
+        }
+
+        .btn-box {
+            transition: transform 0.3s ease;
+        }
+
+        @media print {
+            @page {
+                size: A4;
+                margin: 15mm 20mm;
+                /* topo/baixo | laterais */
+            }
+
+            body {
+                margin: 20mm;
+                padding: 0;
+            }
+
+            .conteudo-impressao {
+                margin: 20 auto;
+                padding: 10;
+                width: 100%;
+            }
+
+        }
+
+        /* Acesso */
+        .acessos-layout {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .acesso-form-card,
+        .acesso-table-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .form-title {
+            background: #111827;
+            color: white;
+            padding: 15px;
+            font-size: 12px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .acesso-form-card form {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-weight: 700;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: #f97316;
+        }
+
+        .btn-salvar-acesso {
+            background: #f97316;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: 900;
+            cursor: pointer;
+        }
+
+        .table-top {
+            padding: 20px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .action-btn {
+            border: none;
+            padding: 10px 16px;
+            border-radius: 10px;
+            background: #111827;
+            color: white;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .action-btn.orange {
+            background: #f97316;
+        }
+
+        .btn-edit {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .btn-delete {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        @media(max-width:900px) {
+
+            .acessos-layout {
+                grid-template-columns: 1fr;
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+    <div id="loading" class="loading-spinner hidden">
+        <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-600 border-solid"></div>
+        <p class="mt-4 font-black text-xs text-blue-900 tracking-widest uppercase" id="loading-text">Sincronizando Banco
+            de Dados...</p>
+        <div id="import-progress-bar" class="hidden">
+            <div id="import-progress-fill"></div>
+        </div>
+        <p id="import-progress-label" class="text-[10px] text-gray-500 font-bold mt-2 hidden"></p>
+    </div>
+    <!-- Modal de Mensagens -->
+    <div id="custom-modal" class="hidden">
+        <div class="bg-white p-6 rounded-lg shadow-2xl border-t-4 border-blue-600 max-w-sm w-full text-center">
+            <h3 id="modal-title" class="text-lg font-black uppercase mb-2">Aviso</h3>
+            <p id="modal-msg" class="text-sm text-gray-600 font-bold mb-6 uppercase tracking-tight"></p>
+            <button onclick="closeModal()"
+                class="px-6 py-2 bg-zinc-800 text-white font-black rounded uppercase text-xs">Entendido</button>
+        </div>
+    </div>
+    <div id="login-screen">
+        <div class="flex items-center justify-center min-h-screen">
+            <div class="bg-white p-10 rounded shadow-2xl w-full max-w-sm border-t-8 border-red-600 text-center">
+                <img src="https://raw.githubusercontent.com/MLDGP1977/Bellotto/main/LOGO.png" alt="Bellotto"
+                    class="h-12 mx-auto mb-6">
+                <h2 class="text-2xl font-black text-gray-800 uppercase mb-6 tracking-tight">Login PCP</h2>
+                <form id="login-form" class="space-y-4">
+                    <input type="text" id="username" autocomplete=off placeholder="Usuário" required
+                        class="w-full px-4 py-3 border-2 border-gray-100 rounded focus:border-red-500 outline-none font-bold">
+                    <input type="text" id="pass" autocomplete=off placeholder="Senha" required
+                        class="w-full px-4 py-3 border-2 border-gray-100 rounded focus:border-red-500 outline-none font-bold"
+                        style="-webkit-text-security: disc !important;">
+                    <button type="submit"
+                        class="w-full py-4 bg-zinc-800 text-white font-black rounded hover:bg-black transition-all">Acessar
+                        Sistema</button>
+                    <div id="login-error" class="hidden text-red-600 text-xs font-bold mt-2 uppercase">Acesso Negado
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="main-content" class="hidden">
+        <header>
+            <div class="header-logo-container">
+                <img src="https://raw.githubusercontent.com/MLDGP1977/Bellotto/main/LOGO.png" alt="Bellotto"
+                    class="h-10">
+            </div>
+            <h1 class="text-2xl font-black italic tracking-widest uppercase">Monitoramento PCP</h1>
+            <div class="flex items-center gap-6">
+                <span class="font-black text-2xl text-red-600">SENAI</span>
+                <button onclick="logout()" class="hover:text-red-500 transition-all"><i
+                        class="fas fa-power-off fa-lg"></i></button>
+            </div>
+        </header>
+        <div id="menu-grid" class="industrial-container">
+            <div id="btn-acessos" class="btn-box hidden" onclick="abrirControleAcessos()">
+                <div class="outer-rim c-access">
+                    <div class="screw s1"></div>
+                    <div class="screw s2"></div>
+                    <div class="screw s3"></div>
+                    <div class="screw s4"></div>
+                    <div class="inner-display">
+                        <div class="neon-ring"></div>
+                        <i class="fas fa-user-shield btn-icon"></i>
+                        <span class="btn-text">Acessos</span>
+                    </div>
+                </div>
+            </div>
+            <div class="btn-box" onclick="navigateTo('pcp')">
+                <div class="outer-rim c-pcp">
+                    <div class="screw s1"></div>
+                    <div class="screw s2"></div>
+                    <div class="screw s3"></div>
+                    <div class="screw s4"></div>
+                    <div class="inner-display">
+                        <div class="neon-ring"></div>
+                        <i class="fas fa-microchip btn-icon"></i><span class="btn-text">Cockpit</span>
+                    </div>
+                </div>
+            </div>
+            <div class="btn-box" onclick="abrirRegistroProducao()">
+                <div class="outer-rim c-producao">
+                    <div class="screw s1"></div>
+                    <div class="screw s2"></div>
+                    <div class="screw s3"></div>
+                    <div class="screw s4"></div>
+                    <div class="inner-display">
+                        <div class="neon-ring"></div>
+                        <i class="fas fa-industry btn-icon"></i>
+                        <span class="btn-text">Produção</span>
+                    </div>
+                </div>
+            </div>
+            <div class="btn-box" onclick="showMessage('Em desenvolvimento', 'Esta área estará disponível em breve.')">
+                <div class="outer-rim c-stop">
+                    <div class="screw s1"></div>
+                    <div class="screw s2"></div>
+                    <div class="screw s3"></div>
+                    <div class="screw s4"></div>
+                    <div class="inner-display">
+                        <div class="neon-ring"></div>
+                        <i class="fas fa-filter-circle-xmark btn-icon"></i><span class="btn-text">Paradas</span>
+                    </div>
+                </div>
+            </div>
+            <div class="btn-box" onclick="showMessage('Em desenvolvimento', 'Esta área estará disponível em breve.')">
+                <div class="outer-rim c-area">
+                    <div class="screw s1"></div>
+                    <div class="screw s2"></div>
+                    <div class="screw s3"></div>
+                    <div class="screw s4"></div>
+                    <div class="inner-display">
+                        <div class="neon-ring"></div>
+                        <i class="fas fa-chart-line btn-icon"></i><span class="btn-text">Performance</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tela Acesso -->
+    <div id="screen-acessos" class="screen hidden">
+        <!-- HEADER -->
+        <header>
+            <div style="display:flex; align-items:center; gap:15px;">
+                <img src="https://raw.githubusercontent.com/MLDGP1977/Bellotto/main/LOGO.png"
+                    class="h-12 bg-white p-1 rounded shadow-sm" style="height:50px;">
+                <div>
+                    <div style="font-size:22px; font-weight:900; font-style:italic;">
+                        MONITORAMENTO PCP
+                    </div>
+                    <div style="
+                    font-size:10px;
+                    color:#f97316;
+                    font-weight:900;
+                    letter-spacing:3px;
+                    text-transform:uppercase;
+                ">
+                        Controle de Acessos
+                    </div>
+                </div>
+            </div>
+            <div style="display:flex; gap:10px;">
+                <button onclick="voltarMenuPrincipal()" class="action-btn">
+                    ← Menu
+                </button>
+            </div>
+        </header>
+        <!-- CONTEÚDO -->
+        <div class="acessos-layout">
+            <!-- FORM -->
+            <div class="acesso-form-card">
+                <div id="titulo-form-acesso" class="form-title">
+                    Novo Usuário
+                </div>
+                <form onsubmit="salvarUsuario(event)">
+                    <input id="acesso-login" placeholder="LOGIN" required class="form-input">
+                    <input id="acesso-senha" placeholder="SENHA" required class="form-input">
+                    <input id="acesso-email" placeholder="EMAIL" required class="form-input">
+                    <select id="acesso-tipo" class="form-input" required>
+                        <option value="USER" selected>USER</option>
+                        <option value="ADMIN">ADMIN</option>
+                    </select>
+                    <button id="btn-salvar-usuario" class="btn-salvar-acesso">
+                        Salvar Usuário
+                    </button>
+                </form>
+            </div>
+            <!-- TABELA -->
+            <div class="acesso-table-card">
+                <div class="table-top">
+                    <input id="filtro-usuarios" placeholder="Filtrar usuário..." class="form-input"
+                        onkeyup="filtrarUsuarios()">
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Login</th>
+                                <th>Senha</th>
+                                <th>Email</th>
+                                <th>Tipo</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-usuarios"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Cockpit-->
+    <div id="pcp-module" class="hidden p-6">
+        <div class="max-w-[1400px] mx-auto">
+            <div class="flex flex-col lg:flex-row justify-between lg:items-end gap-4 mb-6">
+                <div>
+                    <button onclick="backToHome()"
+                        class="text-[10px] font-black text-gray-500 hover:text-black uppercase tracking-widest mb-1 flex items-center">
+                        <i class="fas fa-arrow-left mr-2"></i> Voltar ao Menu
+                    </button>
+                    <h2 class="text-3xl font-black uppercase tracking-tighter text-zinc-800">Cockpit de Planejamento
+                    </h2>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <input type="file" id="csv-input" accept=".csv" class="hidden" onchange="handleCSVImport(this)">
+                    <button onclick="document.getElementById('csv-input').click()"
+                        class="w-full sm:w-auto px-4 py-2 bg-blue-700 text-white font-black rounded shadow hover:bg-blue-800 transition-all text-[10px] tracking-widest uppercase flex items-center justify-center">
+                        <i class="fas fa-file-import mr-2"></i> Importar CSV
+                    </button>
+                    <button id="btn-tabelas-aux" onclick="abrirPlanilha()"
+                        class="w-full sm:w-auto px-4 py-2 bg-blue-700 text-white font-black rounded shadow hover:bg-blue-800 transition-all text-[10px] tracking-widest uppercase flex items-center justify-center">
+                        <i class="fas fa-file-excel mr-2"></i> Tabelas Auxiliares
+                    </button>
+                    <button onclick="abrirModalImpressao()"
+                        class="w-full sm:w-auto px-4 py-2 bg-blue-700 text-white font-black rounded shadow hover:bg-blue-800 transition-all text-[10px] tracking-widest uppercase flex items-center justify-center">
+                        <i class="fas fa-print mr-2"></i> Imprimir
+                    </button>
+                    <button onclick="loadTable6Data()"
+                        class="w-full sm:w-auto px-4 py-2 bg-blue-700 text-white font-black rounded shadow hover:bg-blue-800 transition-all text-[10px] tracking-widest uppercase flex items-center justify-center">
+                        <i class="fas fa-sync-alt mr-2"></i> Sincronizar
+                    </button>
+                </div>
+            </div>
+            <!-- Quadro de Indicadores -->
+            <div id="stats-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+                <div class="stat-card stat-today">
+                    <div class="stat-title"><i class="fas fa-calendar-day"></i> Hoje</div>
+                    <div class="stat-line"><span class="stat-label">OPs</span><span class="stat-val1"
+                            id="val-today-ops">0</span></div>
+                    <div class="stat-line"><span class="stat-label">Códs</span><span class="stat-val1"
+                            id="val-today-cods">0</span></div>
+                    <div class="stat-line"><span class="stat-label">Em produção</span><span class="stat-val1"
+                            id="val-today-units">0</span></div>
+                </div>
+                <div class="stat-card stat-week">
+                    <div class="stat-title"><i class="fas fa-calendar-week"></i> Semana</div>
+                    <div class="stat-line"><span class="stat-label">OPs</span><span class="stat-val1"
+                            id="val-week-ops">0</span></div>
+                    <div class="stat-line"><span class="stat-label">Códs</span><span class="stat-val1"
+                            id="val-week-cods">0</span></div>
+                    <div class="stat-line"><span class="stat-label">Em produção</span><span class="stat-val1"
+                            id="val-week-units">0</span></div>
+                </div>
+                <div class="stat-card stat-month">
+                    <div class="stat-title"><i class="fas fa-calendar-alt"></i> Mês</div>
+                    <div class="stat-line"><span class="stat-label">OPs</span><span class="stat-val1"
+                            id="val-month-ops">0</span></div>
+                    <div class="stat-line"><span class="stat-label">Códs</span><span class="stat-val1"
+                            id="val-month-cods">0</span></div>
+                    <div class="stat-line"><span class="stat-label">Em produção</span><span class="stat-val1"
+                            id="val-month-units">0</span></div>
+                </div>
+                <div class="stat-card stat-unprioritized">
+                    <div class="stat-title"><i class="fas fa-exclamation-circle"></i> S/ Prioridade</div>
+                    <div class="stat-line"><span class="stat-label">OPs</span><span class="stat-val1"
+                            id="val-none-ops">0</span></div>
+                    <div class="stat-line"><span class="stat-label">Códs</span><span class="stat-val1"
+                            id="val-none-cods">0</span></div>
+                    <div class="stat-line"><span class="stat-label">Em produção</span><span class="stat-val1"
+                            id="val-none-units">0</span></div>
+                </div>
+                <div class="stat-card stat-total">
+                    <div class="stat-title">
+                        <i class="fas fa-database"></i> Total
+                    </div>
+                    <div class="stat-line">
+                        <span class="stat-label">OPs</span>
+                        <span class="stat-val1" id="val-total-ops">0</span>
+                    </div>
+                    <div class="stat-line">
+                        <span class="stat-label">Códs</span>
+                        <span class="stat-val1" id="val-total-cods">0</span>
+                    </div>
+                    <div class="stat-line">
+                        <span class="stat-label">Em produção</span>
+                        <span class="stat-val1" id="val-total-units">0</span>
+                    </div>
+                </div>
+            </div>
+            <!-- FILTROS -->
+            <div class="bg-white p-4 rounded shadow mb-4 grid grid-cols-1 md:grid-cols-6 gap-3">
+                <input list="lista-op" id="filtro-op" placeholder="Filtrar OP"
+                    class="border p-2 rounded text-xs font-bold uppercase">
+                <input list="lista-codigo" id="filtro-codigo" placeholder="Filtrar Código"
+                    class="border p-2 rounded text-xs font-bold uppercase">
+                <input list="lista-setor" id="filtro-setor" placeholder="Filtrar Setor"
+                    class="border p-2 rounded text-xs font-bold uppercase">
+                <input type="date" id="filtro-data" class="border p-2 rounded text-xs font-bold uppercase">
+
+                <input list="lista-produto" id="filtro-produto" placeholder="Filtrar Produto"
+                    class="border p-2 rounded text-xs font-bold uppercase">
+                <button onclick="limparFiltros()"
+                    class="bg-red-600 text-white text-xs font-black rounded px-3 py-2 uppercase">
+                    Limpar
+                </button>
+            </div>
+            <!-- LISTAS (AUTOCOMPLETE) -->
+            <datalist id="lista-op"></datalist>
+            <datalist id="lista-codigo"></datalist>
+            <datalist id="lista-setor"></datalist>
+            <datalist id="lista-produto"></datalist>
+            <!-- Tabela de Produção -->
+            <div class="cockpit-card">
+                <div class="table-title-bar">Produção em Aberto</div>
+                <div class="table-wrapper">
+                    <table id="tabela-base-dados">
+                        <thead>
+                            <tr>
+                                <th onclick="sortTable('op')">OP <i class="fas fa-sort sort-icon"></i></th>
+                                <th onclick="sortTable('codigo')">Cód. <i class="fas fa-sort sort-icon"></i></th>
+                                <th onclick="sortTable('produto')">Produto <i class="fas fa-sort sort-icon"></i>
+                                </th>
+                                <th onclick="sortTable('qtd_pendente')">Qtd. Pendente <i
+                                        class="fas fa-sort sort-icon"></i></th>
+                                <th onclick="sortTable('est_virtual')">Est. Virtual <i
+                                        class="fas fa-sort sort-icon"></i></th>
+                                <th onclick="sortTable('est_real')">Est. Real <i class="fas fa-sort sort-icon"></i>
+                                </th>
+                                <th onclick="sortTable('prioridade')">Prioridade <i class="fas fa-sort sort-icon"></i>
+                                <th onclick="sortTable('setor')">Setor <i class="fas fa-sort sort-icon"></i></th>
+                                <th onclick="sortTable('status')">Status <i class="fas fa-sort sort-icon"></i></th>
+                                </th>
+                                <th onclick="sortTable('data')">Data <i class="fas fa-sort sort-icon"></i></th>
+                            </tr>
+                        </thead>
+                        <tbody id="pcp-data-body">
+                            <tr>
+                                <td colspan="11"
+                                    class="py-20 text-gray-400 italic font-bold uppercase tracking-widest text-center">
+                                    Buscando informações...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Tela Produção -->
+    <div id="tela-producao" class="hidden p-6">
+        <div class="max-w-[1400px] mx-auto">
+            <div>
+                <button onclick="backToHome()"
+                    class="text-[10px] font-black text-gray-500 hover:text-black uppercase tracking-widest mb-1 flex items-center">
+                    <i class="fas fa-arrow-left mr-2"></i> Voltar ao Menu
+                </button>
+                <h2 class="text-3xl font-black uppercase tracking-tighter text-zinc-800 mb-2">Lançar
+                    Produção
+                </h2>
+            </div>
+            <!-- CARDS -->
+            <div id="cards-setores" class="cards-grid">
+                <div id="loading-cards" class="flex flex-col items-center justify-center py-10 text-gray-400">
+                    <div class="animate-spin rounded-full h-8 w-8 border-t-4 border-blue-500 border-solid mb-3">
+                    </div>
+                    <span class="text-xs font-bold uppercase">Carregando dados...</span>
+                </div>
+            </div>
+            <!-- FILTROS -->
+            <div class="bg-white p-4 rounded shadow mb-4 grid grid-cols-1 md:grid-cols-4 gap-3">
+                <input list="lista-op-prod" id="filtro-op-prod" placeholder="Filtrar OP"
+                    class="border p-2 rounded text-xs font-bold uppercase">
+                <input list="lista-codigo-prod" id="filtro-codigo-prod" placeholder="Filtrar Código"
+                    class="border p-2 rounded text-xs font-bold uppercase">
+                <input list="lista-produto-prod" id="filtro-produto-prod" placeholder="Filtrar Produto"
+                    class="border p-2 rounded text-xs font-bold uppercase">
+                <button onclick="limparFiltrosProducao()"
+                    class="bg-red-600 text-white text-xs font-black rounded px-3 py-2 uppercase">
+                    Limpar
+                </button>
+            </div>
+            <!-- datalist -->
+            <datalist id="lista-op-prod"></datalist>
+            <datalist id="lista-codigo-prod"></datalist>
+            <datalist id="lista-produto-prod"></datalist>
+            <datalist id="lista-colaboradores"></datalist>
+            <!-- Tabela -->
+            <div class="cockpit-card">
+                <div class="table-title-bar">Tabela de Produção</div>
+                <div class="table-wrapper">
+                    <table id="tabela-producao">
+                        <thead>
+                            <tr>
+                                <th onclick="ordenarTabelaProducao('setor')">SETOR <i class="fas fa-sort sort-icon"></i>
+                                </th>
+                                <th onclick="ordenarTabelaProducao('op')">OP <i class="fas fa-sort sort-icon"></i>
+                                </th>
+                                <th onclick="ordenarTabelaProducao('codigo')">Cód. <i class="fas fa-sort sort-icon"></i>
+                                </th>
+                                <th onclick="ordenarTabelaProducao('produto')">Produto <i
+                                        class="fas fa-sort sort-icon"></i>
+                                </th>
+                                <th onclick="ordenarTabelaProducao('qtd_pendente')">Qtd. Pendente <i
+                                        class="fas fa-sort sort-icon"></i>
+                                </th>
+                                <th onclick="ordenarTabelaProducao('prioridade')">Prioridade <i
+                                        class="fas fa-sort sort-icon"></i>
+                                </th>
+                                <th onclick="ordenarTabelaProducao('status')">Status <i
+                                        class="fas fa-sort sort-icon"></i>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="pcp-data-body">
+                            <tr>
+                                <td colspan="11"
+                                    class="py-20 text-gray-400 italic font-bold uppercase tracking-widest text-center">
+                                    Buscando informações...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz84M2hcdGNkaXjD3HAJw6Q_kY2gM8uJp-kQAMsqMM9FImLWaAxSeXk7e2pmXH1CW8/exec';
+        const LOTE_TAMANHO = 10;
+        let userLogged = "";
+        let tipoUsuario = "USER";
+        let globalPCPData = [];
+        let currentSort = { column: null, direction: 'asc' };
+        const LIMITE_VERDE = 150;
+        const LIMITE_AMARELO = 300;
+        let dadosCockpit = [];
+        let ultimoHashCockpit = "";
+        function gerarHash(dados) {
+            return JSON.stringify(dados);
+        }
+
+        async function buscarDadosCockpit() {
+            if (window._cockpitLoading) return;
+            window._cockpitLoading = true;
+            try {
+                const data = await jsonpRequest({ action: 'getPCPData' });
+                const rawList = data.producao || [];
+                const filtrado = rawList.filter(item => {
+                    const s = String(item.status || "").toUpperCase();
+                    return !s.includes("CONCLUÍDO") && !s.includes("CONCLUIDO");
+                });
+                const novoHash = gerarHash(filtrado);
+                if (novoHash !== ultimoHashCockpit) {
+                    globalPCPData = filtrado;
+                    ultimoHashCockpit = novoHash;
+                    updateStats(globalPCPData);
+                    displayTableData(globalPCPData);
+                }
+            } catch (err) {
+                console.error("Erro cockpit:", err);
+            } finally {
+                window._cockpitLoading = false;
+            }
+        }
+
+        let intervaloCockpit = null;
+        function abrirCockpit() {
+            buscarDadosCockpit();
+            if (intervaloCockpit) clearInterval(intervaloCockpit);
+            intervaloCockpit = setInterval(buscarDadosCockpit, 15000);
+        }
+
+        function montarCockpit() {
+            updateStats(globalPCPData);
+            displayTableData(globalPCPData);
+        }
+
+        function showMessage(title, msg) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = msg;
+            document.getElementById('custom-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        function showLoading(msg) {
+            document.getElementById('loading-text').innerText = msg;
+            document.getElementById('loading').classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('import-progress-bar').classList.add('hidden');
+            document.getElementById('import-progress-label').classList.add('hidden');
+        }
+
+        function cleanupJSONP() {
+            document.querySelectorAll('.jsonp-script').forEach(s => s.remove());
+        }
+
+        function getStatusClass(status) {
+            if (!status) return 'badge-pendente';
+            const s = status.toUpperCase();
+            if (s.includes('PRODUÇÃO') || s.includes('PRODUCAO')) return 'badge-producao';
+            return 'badge-pendente';
+        }
+
+        function abrirPlanilha() {
+            window.open(
+                'https://docs.google.com/spreadsheets/d/13g3Oe0wCunexXB0z8FhLKjEUHOljjbMPzrMTHLq2vIM/edit?gid=736423650',
+                '_blank'
+            );
+        }
+
+        function formatarDataBrasileira(dataStr) {
+            if (!dataStr || dataStr === '-') return '-';
+            const d = parseBRDate(dataStr);
+            if (isNaN(d.getTime())) return dataStr;
+            return d.toLocaleDateString('pt-BR');
+        }
+
+        async function registrarProducao(dados) {
+            try {
+                const {
+                    linhaOriginal,
+                    setor,
+                    pendente,
+                    produzida,
+                    perdas,
+                    data,
+                    codigo,
+                    produto,
+                    colaboradores
+                } = dados;
+                const diff = produzida - pendente;
+                const base = await getSheet("Tabela 6 - Base Dados");
+                if (setor !== "Embalagem") {
+                    await addRow("Tabela 6 - Base Dados", [
+                        ...base[linhaOriginal].slice(0, 4),
+                        produzida - perdas,
+                        ...base[linhaOriginal].slice(5, 9),
+                        "Em produção",
+                        "", "", "",
+                        getNextArea(codigo, setor),
+                        "", "", "", "", "", "", "",
+                        "", "", "", "", "", "", "",
+                        "", "", "", ""
+                    ]);
+                    if (diff < 0) {
+                        await addRow("Tabela 6 - Base Dados", [
+                            ...base[linhaOriginal].slice(0, 4),
+                            pendente - produzida,
+                            ...base[linhaOriginal].slice(5, 9),
+                            "Em produção",
+                            setor
+                        ]);
+                    }
+                }
+                if (perdas > 0) {
+                    await addRow("Tabela 6 - Base Dados", [
+                        ...base[linhaOriginal].slice(0, 3),
+                        0,
+                        perdas,
+                        0, 0,
+                        base[linhaOriginal][7],
+                        "PERDAS",
+                        "", "", "",
+                        getPrimeiraArea(codigo)
+                    ]);
+                }
+                await updateRow("Tabela 6 - Base Dados", linhaOriginal, {
+                    status: "Concluído",
+                    produzido: produzida,
+                    perdas: perdas,
+                    data: data,
+                    colaboradores: colaboradores
+                });
+                for (let col of colaboradores) {
+                    if (!col.nome) continue;
+                    await addRow("Tabela 8 - BD Colaborador", [
+                        col.nome,
+                        setor,
+                        codigo,
+                        produto,
+                        data,
+                        col.horas,
+                        produzida,
+                        perdas,
+                        col.meta
+                    ]);
+                }
+
+                alert("Registro realizado com sucesso!");
+            } catch (err) {
+                console.error(err);
+                alert("Erro ao registrar produção");
+            }
+        }
+
+        async function getSheet(nomeAba) {
+            const res = await fetch(`/api/sheets?aba=${nomeAba}`);
+            return await res.json();
+        }
+
+        async function addRow(aba, valores) {
+            await fetch(`/api/addRow`, {
+                method: "POST",
+                body: JSON.stringify({ aba, valores })
+            });
+        }
+
+        async function updateRow(aba, linha, dados) {
+            await fetch(`/api/updateRow`, {
+                method: "POST",
+                body: JSON.stringify({ aba, linha, dados })
+            });
+        }
+
+        function getNextArea(codigo, setorAtual) {
+            var sheet = SpreadsheetApp.getActiveSpreadsheet()
+                .getSheetByName("Tabela 10 - SeqAreas");
+            var data = sheet.getDataRange().getValues();
+            for (var i = 1; i < data.length; i++) {
+                if (String(data[i][0]).trim() === String(codigo).trim()) {
+                    var sequencia = data[i].slice(3); // áreas a partir da coluna D
+                    for (var j = 0; j < sequencia.length; j++) {
+                        if (sequencia[j] === setorAtual) {
+                            return sequencia[j + 1] || "Finalizado";
+                        }
+                    }
+                }
+            }
+            return "Finalizado";
+        }
+
+        async function enviarRegistro() {
+            const dados = {
+                linhaOriginal: 10,
+                setor: "Corte",
+                pendente: 100,
+                produzida: 80,
+                perdas: 5,
+                data: "25/04/26",
+                codigo: "12345",
+                produto: "Produto X",
+                user: "admin",
+                colaboradores: [
+                    { nome: "João", horas: 8, meta: 100 },
+                    { nome: "Maria", horas: 8, meta: 100 }
+                ]
+            };
+            await fetch(SCRIPT_URL);
+        }
+
+        function abrirRegistroProducao() {
+            document.getElementById("menu-grid").classList.add("hidden");
+            document.getElementById("tela-producao").classList.remove("hidden");
+            carregarColaboradores();
+            buscarDadosProducao();
+            setInterval(buscarDadosProducao, 15000);
+        }
+
+        function voltarMenu() {
+            document.getElementById("tela-producao").classList.add("hidden");
+            document.getElementById("menu-grid").classList.remove("hidden");
+            setorSelecionado = null;
+            document.getElementById("filtro-busca").value = "";
+            document.querySelector("#tabela-producao tbody").innerHTML = "";
+        }
+
+        let dadosProducao = [];
+        let setorSelecionado = null;
+        let ordenacaoProducao = {
+            coluna: null,
+            direcao: 'asc'
+        };
+
+        async function montarCardsSetores() {
+            const overlay = document.getElementById("loading");
+            overlay.classList.remove("hidden");
+            carregandoDados = true;
+            await new Promise(resolve => setTimeout(resolve, 50));
+            try {
+                const container = document.getElementById("cards-setores");
+                container.innerHTML = "";
+                const grupos = {};
+                dadosProducao.forEach(item => {
+                    if (item.status === "Concluído") return;
+                    if (!grupos[item.setor]) {
+                        grupos[item.setor] = {
+                            ops: new Set(),
+                            codigos: new Set(),
+                            unidades: 0
+                        };
+                    }
+                    grupos[item.setor].ops.add(item.op);
+                    grupos[item.setor].codigos.add(item.codigo);
+                    grupos[item.setor].unidades += Number(item.qtd_pendente || 0);
+                });
+                Object.keys(grupos)
+                    .sort((a, b) => a.localeCompare(b, 'pt-BR'))
+                    .forEach(setor => {
+                        const g = grupos[setor];
+                        let cor = "#16a34a";
+                        if (g.unidades > LIMITE_AMARELO) {
+                            cor = "#dc2626";
+                        } else if (g.unidades > LIMITE_VERDE) {
+                            cor = "#f59e0b";
+                        }
+                        const card = document.createElement("div");
+                        card.className = "card-setor";
+                        card.style.borderTop = `4px solid ${cor}`;
+                        card.onclick = () => {
+                            if (carregandoDados) return;
+                            setorSelecionado = setor;
+                            const listaFiltrada = dadosProducao.filter(item =>
+                                item.setor === setor &&
+                                item.status !== "Concluído"
+                            );
+                            atualizarListasProducao(listaFiltrada);
+                            renderTabela();
+                        };
+                        card.innerHTML = `
+                    <div class="stat-title">
+                    <i class="fas fa-industry"></i> ${setor}
+                    </div>
+                    <div class="stat-line">
+                    <span class="stat-label">OPs</span>
+                    <span class="stat-val">${g.ops.size}</span>
+                    </div>
+                    <div class="stat-line">
+                    <span class="stat-label">Códs</span>
+                    <span class="stat-val">${g.codigos.size}</span>
+                    </div>
+                    <div class="stat-line">
+                    <span class="stat-label">Em produção</span>
+                    <span class="stat-val">${g.unidades}</span>
+                    </div>
+                `;
+                        container.appendChild(card);
+                    });
+            } finally {
+                overlay.classList.add("hidden");
+                carregandoDados = false;
+            }
+        }
+
+        function renderTabela() {
+            let carregandoProducao = false;
+            const tbody = document.querySelector("#tabela-producao tbody");
+            if (carregandoProducao) {
+                tbody.innerHTML = `
+                <tr>
+                <td colspan="5" class="text-center text-gray-400 font-bold uppercase py-10">
+                Carregando dados...
+                </td>
+                </tr>
+               `;
+                return;
+            }
+            if (!dadosProducao.length) {
+                tbody.innerHTML = `
+                <tr>
+                <td colspan="5" class="text-center text-gray-400 font-bold uppercase py-10">
+                Nenhum registro encontrado
+                </td>
+                </tr>
+                `;
+                return;
+            }
+            if (!dadosProducao.length) {
+                tbody.innerHTML = `
+                <tr>
+                <td colspan="5" class="text-center text-gray-400 font-bold uppercase py-10">
+                Carregando dados...
+                </td>
+                </tr>
+                `;
+                return;
+            }
+            tbody.innerHTML = "";
+            const op = document.getElementById("filtro-op-prod").value.toLowerCase();
+            const codigo = document.getElementById("filtro-codigo-prod").value.toLowerCase();
+            const produto = document.getElementById("filtro-produto-prod").value.toLowerCase();
+            const lista = dadosProducao.filter(item => {
+                if (item.status === "Concluído") return false;
+                if (setorSelecionado && item.setor !== setorSelecionado) return false;
+                const matchOP = !op || String(item.op).toLowerCase().includes(op);
+                const matchCod = !codigo || String(item.codigo).toLowerCase().includes(codigo);
+                const matchProd = !produto || String(item.produto).toLowerCase().includes(produto);
+                let matchData = true;
+                return matchOP && matchCod && matchProd;
+            });
+            if (ordenacaoProducao.coluna) {
+                const col = ordenacaoProducao.coluna;
+                const dir = ordenacaoProducao.direcao;
+                lista.sort((a, b) => {
+                    let valA = a[col];
+                    let valB = b[col];
+                    // números
+                    if (col === 'qtd_pendente' || col === 'op') {
+                        valA = Number(valA) || 0;
+                        valB = Number(valB) || 0;
+                    } else {
+                        valA = String(valA || "").toLowerCase();
+                        valB = String(valB || "").toLowerCase();
+                    }
+                    if (valA < valB) return dir === 'asc' ? -1 : 1;
+                    if (valA > valB) return dir === 'asc' ? 1 : -1;
+                    return 0;
+                });
+            }
+            lista.forEach(item => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                <td class="font-black text-blue-900">${item.setor || '-'}</td>
+                <td class="font-black bg-gray-50">${item.op || '-'}</td>
+                <td class="font-black bg-gray-50">${item.codigo || '-'}</td>
+                <td class="text-center font-bold text-zinc-700 min-w-[200px]">${item.produto || '-'}</td>
+                <td class="font-black text-red-600">${item.qtd_pendente || 0}</td>
+                <td class="text-orange-600 font-bold">${item.prioridade || 0}</td>
+                <td><span class="status-badge ${getStatusClass(item.status)}">${item.status || 'PENDENTE'}</span></td>
+                `;
+                tr.ondblclick = () => {
+                    if (window.innerWidth >= 768) {
+                        abrirRegistro(item);
+                    }
+                };
+
+                tr.ontouchstart = () => {
+                    if (window.innerWidth < 768) {
+                        abrirRegistro(item);
+                    }
+                };
+                tbody.appendChild(tr);
+            });
+        }
+
+        function ordenarTabelaProducao(coluna) {
+            if (ordenacaoProducao.coluna === coluna) {
+                ordenacaoProducao.direcao =
+                    ordenacaoProducao.direcao === 'asc' ? 'desc' : 'asc';
+            } else {
+                ordenacaoProducao.coluna = coluna;
+                ordenacaoProducao.direcao = 'asc';
+            }
+            renderTabela();
+        }
+
+        async function buscarDadosProducao() {
+            if (window._producaoLoading) return;
+            window._producaoLoading = true;
+            try {
+                carregandoProducao = true;
+                renderTabela();
+                const res = await jsonpRequest({ action: 'getPCPData' });
+                dadosProducao = res.producao || [];
+                const novosDados = res.producao || [];
+                const novoHash = gerarHash(novosDados);
+                if (novoHash !== ultimaHashProducao) {
+                    dadosProducao = novosDados;
+                    ultimaHashProducao = novoHash;
+                    const listaBase = setorSelecionado
+                        ? dadosProducao.filter(item => item.setor === setorSelecionado)
+                        : dadosProducao;
+                    atualizarListasProducao(dadosProducao);
+                    await montarCardsSetores();
+                    renderTabela();
+                }
+            } catch (err) {
+                console.error(err);
+            } finally {
+                carregandoProducao = false;
+                window._producaoLoading = false;
+            }
+        }
+
+        let ultimaHashProducao = "";
+        function gerarHash(lista) {
+            return JSON.stringify(lista);
+        }
+
+        async function atualizarProducao() {
+            try {
+                const res = await jsonpRequest({ action: 'getPCPData' });
+                const novaLista = res.producao || [];
+                const novoHash = gerarHash(novaLista);
+                if (novoHash !== ultimaHashProducao) {
+
+                    dadosProducao = novaLista;
+                    ultimaHashProducao = novoHash;
+                    await montarCardsSetores();
+                    renderTabela();
+                }
+            } catch (err) {
+                console.error("Erro ao atualizar:", err);
+            }
+        }
+
+        function atualizarListasProducao(lista) {
+            const setOP = new Set();
+            const setCod = new Set();
+            const setProd = new Set();
+            lista.forEach(item => {
+                if (item.op) setOP.add(item.op);
+                if (item.codigo) setCod.add(item.codigo);
+                if (item.produto) setProd.add(item.produto);
+            });
+            preencherDatalist("lista-op-prod", setOP);
+            preencherDatalist("lista-codigo-prod", setCod);
+            preencherDatalist("lista-produto-prod", setProd);
+        }
+
+        let _jsonpCounter = 0;
+        function jsonpRequest(params) {
+            return new Promise((resolve, reject) => {
+                const cbName = "cb_" + Date.now() + "_" + Math.floor(Math.random() * 1000);
+                const script = document.createElement("script");
+                script.dataset.cb = cbName;
+                script.className = "jsonp-script";
+                window[cbName] = function (data) {
+                    delete window[cbName];
+                    script.remove();
+                    resolve(data);
+                };
+                const query = Object.entries({
+                    ...params,
+                    callback: cbName
+                })
+                    .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+                    .join("&");
+                script.onerror = () => {
+                    delete window[cbName];
+                    script.remove();
+                    reject(new Error("Erro JSONP"));
+                };
+                script.src = `${SCRIPT_URL}?${query}`;
+                document.body.appendChild(script);
+            });
+        }
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            showLoading("Validando Acesso...");
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('pass').value;
+            try {
+                const res = await jsonpRequest({ action: 'login', user: u, pass: p });
+                hideLoading();
+                if (res.success) {
+                    userLogged = u;
+                    tipoUsuario = res.tipo || "USER";
+                    document.getElementById('login-screen').classList.add('hidden');
+                    document.getElementById('main-content').classList.remove('hidden');
+                } else {
+                    document.getElementById('login-error').classList.remove('hidden');
+                    showMessage("Acesso Negado", "Verifique seu usuário e senha.");
+                }
+                if (tipoUsuario === "ADMIN") {
+                    document.getElementById("btn-acessos").classList.remove("hidden");
+                    document.getElementById("btn-tabelas-aux")?.classList.remove("hidden");
+                } else {
+                    document.getElementById("btn-acessos").classList.add("hidden");
+                    document.getElementById("btn-tabelas-aux")?.classList.add("hidden");
+                }
+            } catch (err) {
+                hideLoading();
+                showMessage("Erro de Conexão", "Não foi possível conectar ao servidor.");
+            }
+        });
+
+        function navigateTo(mod) {
+            if (mod === 'pcp') {
+                document.getElementById('menu-grid').classList.add('hidden');
+                document.getElementById('pcp-module').classList.remove('hidden');
+                loadTable6Data();
+                abrirCockpit();
+            }
+        }
+
+        function backToHome() {
+            document.getElementById('pcp-module').classList.add('hidden');
+            document.getElementById('menu-grid').classList.remove('hidden');
+            document.getElementById('tela-producao').classList.add('hidden');
+            limparFiltros();
+            limparFiltrosProducao();
+            setorSelecionado = null;
+            ordenacaoProducao = { coluna: null, direcao: 'asc' };
+            document.querySelector("#tabela-producao tbody").innerHTML = "";
+        }
+
+        function logout() { location.reload(); }
+        async function loadTable6Data() {
+            showLoading("Sincronizando Banco de Dados...");
+            try {
+                const data = await jsonpRequest({ action: 'getPCPData' });
+                const rawList = data.producao || [];
+                globalPCPData = rawList.filter(item => {
+                    const s = String(item.status || "").toUpperCase();
+                    return !s.includes("CONCLUÍDO") && !s.includes("CONCLUIDO");
+                });
+                atualizarListasFiltros(globalPCPData);
+                updateStats(globalPCPData);
+                displayTableData(globalPCPData);
+            } catch (err) {
+                showMessage("Erro", "Falha ao buscar dados: " + err.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function updateStats(list) {
+            const agora = new Date();
+            const stats = {
+                today: { ops: new Set(), cods: new Set(), units: 0 },
+                week: { ops: new Set(), cods: new Set(), units: 0 },
+                month: { ops: new Set(), cods: new Set(), units: 0 },
+                none: { ops: new Set(), cods: new Set(), units: 0 },
+                total: { ops: new Set(), cods: new Set(), units: 0 }
+            };
+            list.forEach(item => {
+                const dItem = item.data ? parseBRDate(item.data) : null;
+                const qtd = parseInt(item.qtd_pendente) || 0;
+                const op = String(item.op || "");
+                const cod = String(item.codigo || "");
+                const prioridade = String(item.prioridade || "").trim();
+                if (op) stats.total.ops.add(op);
+                if (cod) stats.total.cods.add(cod);
+                stats.total.units += qtd;
+                if (prioridade === "0" || prioridade === "" || prioridade === "-") {
+                    if (op) stats.none.ops.add(op);
+                    if (cod) stats.none.cods.add(cod);
+                    stats.none.units += qtd;
+                }
+                if (!dItem || isNaN(dItem.getTime())) return;
+                if (isSameDay(dItem, agora)) {
+                    if (op) stats.today.ops.add(op);
+                    if (cod) stats.today.cods.add(cod);
+                    stats.today.units += qtd;
+                }
+                if (isSameWeek(dItem, agora)) {
+                    if (op) stats.week.ops.add(op);
+                    if (cod) stats.week.cods.add(cod);
+                    stats.week.units += qtd;
+                }
+                if (dItem.getMonth() === agora.getMonth() &&
+                    dItem.getFullYear() === agora.getFullYear()) {
+                    if (op) stats.month.ops.add(op);
+                    if (cod) stats.month.cods.add(cod);
+                    stats.month.units += qtd;
+                }
+            });
+            ['today', 'week', 'month', 'none', 'total'].forEach(p => {
+                document.getElementById(`val-${p}-ops`).innerText = stats[p].ops.size;
+                document.getElementById(`val-${p}-cods`).innerText = stats[p].cods.size;
+                document.getElementById(`val-${p}-units`).innerText = stats[p].units.toLocaleString('pt-BR');
+            });
+        }
+
+        function displayTableData(list) {
+            const tbody = document.getElementById('pcp-data-body');
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="11" class="py-10 text-blue-500 font-bold uppercase tracking-wider text-center">Nenhuma OP pendente encontrada.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = list.map(item => `
+                <tr>
+                    <tr ondblclick="editarPrioridade('${item.op}', '${item.codigo}', '${item.setor}', '${item.prioridade}')">
+                    <td class="font-black text-blue-900">${item.op || '-'}</td>
+                    <td class="bg-gray-50">${item.codigo || '-'}</td>
+                    <td class="text-left font-bold text-zinc-700 min-w-[200px]">${item.produto || '-'}</td>
+                    <td class="font-black text-red-600">${item.qtd_pendente || 0}</td>
+                    <td>${item.est_virtual || 0}</td>
+                    <td>${item.est_real || 0}</td>
+                    <td class="text-orange-600 font-bold">${item.prioridade || 0}</td>
+                    <td class="text-[9px] font-black uppercase">${item.setor || '-'}</td>
+                    <td><span class="status-badge ${getStatusClass(item.status)}">${item.status || 'PENDENTE'}</span></td>
+                    <td class="text-[10px] text-gray-500 font-bold">${formatarDataBrasileira(item.data)}</td>
+                </tr>
+            `).join('');
+        }
+
+        function sortTable(column) {
+            document.querySelectorAll('th').forEach(th => th.classList.remove('active-sort'));
+            if (currentSort.column === column) {
+                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.column = column;
+                currentSort.direction = 'asc';
+            }
+            const ths = Array.from(document.querySelectorAll('th'));
+            const targetHeader = ths.find(h => h.innerText.toLowerCase().includes(column));
+            if (targetHeader) targetHeader.classList.add('active-sort');
+            const numericColumns = ['op', 'codigo', 'qtd_pendente', 'est_virtual', 'est_real', 'perdas', 'prioridade'];
+            globalPCPData.sort((a, b) => {
+                let valA = a[column];
+                let valB = b[column];
+                if (numericColumns.includes(column)) {
+                    valA = parseFloat(String(valA).replace(/[^\d.-]/g, '')) || 0;
+                    valB = parseFloat(String(valB).replace(/[^\d.-]/g, '')) || 0;
+                } else {
+                    valA = String(valA || "").toLowerCase();
+                    valB = String(valB || "").toLowerCase();
+                }
+                if (valA < valB) return currentSort.direction === 'asc' ? -1 : 1;
+                if (valA > valB) return currentSort.direction === 'asc' ? 1 : -1;
+                return 0;
+            });
+            displayTableData(globalPCPData);
+        }
+
+        function atualizarListasFiltros(lista) {
+            const setOP = new Set();
+            const setCod = new Set();
+            const setSetor = new Set();
+            const setProd = new Set();
+            lista.forEach(item => {
+                if (item.op) setOP.add(item.op);
+                if (item.codigo) setCod.add(item.codigo);
+                if (item.setor) setSetor.add(item.setor);
+                if (item.produto) setProd.add(item.produto);
+            });
+            preencherDatalist('lista-op', setOP);
+            preencherDatalist('lista-codigo', setCod);
+            preencherDatalist('lista-setor', setSetor);
+            preencherDatalist('lista-produto', setProd);
+        }
+
+        function aplicarFiltros() {
+            const op = document.getElementById('filtro-op').value.toLowerCase();
+            const codigo = document.getElementById('filtro-codigo').value.toLowerCase();
+            const setor = document.getElementById('filtro-setor').value.toLowerCase();
+            const data = document.getElementById('filtro-data').value;
+            const produto = document.getElementById('filtro-produto').value.toLowerCase();
+            const filtrado = globalPCPData.filter(item => {
+                const matchOP = !op || String(item.op).toLowerCase().includes(op);
+                const matchCod = !codigo || String(item.codigo).toLowerCase().includes(codigo);
+                const matchSetor = !setor || String(item.setor).toLowerCase().includes(setor);
+                const matchProd = !produto || String(item.produto).toLowerCase().includes(produto);
+                let matchData = true;
+                if (data) {
+                    // Converte dd/MM/yy → yyyy-MM-dd
+                    if (item.data) {
+                        const partes = item.data.split('/');
+
+                        if (partes.length === 3) {
+                            const dataFormatada = `20${partes[2]}-${partes[1]}-${partes[0]}`;
+                            matchData = dataFormatada === data;
+                        } else {
+                            matchData = false;
+                        }
+                    } else {
+                        matchData = false;
+                    }
+                }
+                return matchOP && matchCod && matchSetor && matchProd && matchData;
+            });
+            displayTableData(filtrado);
+        }
+
+        function limparFiltros() {
+            document.getElementById('filtro-op').value = "";
+            document.getElementById('filtro-codigo').value = "";
+            document.getElementById('filtro-setor').value = "";
+            document.getElementById('filtro-data').value = "";
+            document.getElementById('filtro-produto').value = "";
+            displayTableData(globalPCPData);
+        }
+
+        function limparFiltrosProducao() {
+            document.getElementById("filtro-op-prod").value = "";
+            document.getElementById("filtro-codigo-prod").value = "";
+            document.getElementById("filtro-produto-prod").value = "";
+            setorSelecionado = null;
+            atualizarListasProducao(dadosProducao);
+            renderTabela();
+        }
+        const SETOR_REF = {
+            "72": "ESTAMPO",
+            "10": "CORTE",
+            "80": "SOLDA"
+        };
+        const SETOR_PADRAO = "NÃO DEFINIDO";
+
+        function resolverSetor(codigo) {
+            const cod = String(codigo).trim();
+            for (const prefixo in SETOR_REF) {
+                if (cod.startsWith(prefixo)) return SETOR_REF[prefixo];
+            }
+            return SETOR_PADRAO;
+        }
+
+        async function handleCSVImport(input) {
+            const file = input.files[0];
+            if (!file) return;
+            showLoading("Lendo arquivo CSV...");
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                try {
+                    const text = e.target.result;
+                    const rows = text.split(/\r?\n/);
+                    const existingKeys = new Set(
+                        globalPCPData.map(item => `${String(item.op).trim()}|${String(item.codigo).trim()}`)
+                    );
+                    const novasOps = [];
+                    for (let i = 1; i < rows.length; i++) {
+                        const linha = rows[i].trim();
+                        if (!linha) continue;
+                        const campos = parseCSVLine(linha);
+                        if (campos.length < 2) continue;
+                        const op = (campos[0] || "").trim();
+                        const codigo = (campos[1] || "").trim();
+                        if (!op || !codigo) continue;
+                        const chave = `${op}|${codigo}`;
+                        if (existingKeys.has(chave)) continue; // Duplicata, pula
+                        const qtdInicial = parseFloat(campos[3] || "0");
+                        const qtdFinal = parseFloat(campos[4] || "0");
+                        novasOps.push({
+                            op: op,
+                            codigo: codigo,
+                            produto: (campos[2] || "NÃO INFORMADO").trim(),
+                            qtd_inicial: qtdInicial,
+                            qtd_final: qtdFinal,
+                            qtd_pendente: qtdFinal,
+                            est_virtual: (campos[5] || "0").trim(),
+                            est_real: (campos[6] || "0").trim(),
+                            data: converterDataCSV_BR(campos[7]),
+                            setor: resolverSetor(codigo)
+                        });
+                        existingKeys.add(chave);
+                    }
+                    if (novasOps.length === 0) {
+                        hideLoading();
+                        showMessage("Atenção", "Nenhuma OP nova encontrada no arquivo. Todas já estão cadastradas.");
+                        input.value = "";
+                        return;
+                    }
+                    await enviarEmLotes(novasOps);
+                } catch (err) {
+                    hideLoading();
+                    showMessage("Erro", "Falha ao processar o CSV: " + err.message);
+                }
+                input.value = "";
+            };
+            reader.onerror = () => {
+                hideLoading();
+                showMessage("Erro", "Não foi possível ler o arquivo.");
+                input.value = "";
+            };
+            reader.readAsText(file, 'ISO-8859-1');
+        }
+
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let insideQuotes = false;
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+
+                if (char === '"') {
+                    insideQuotes = !insideQuotes;
+                } else if (char === ';' && !insideQuotes) {
+                    result.push(current);
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            result.push(current);
+            return result;
+        }
+
+        async function enviarEmLotes(todasAsOps) {
+            const progressBar = document.getElementById('import-progress-bar');
+            const progressFill = document.getElementById('import-progress-fill');
+            const progressLbl = document.getElementById('import-progress-label');
+            progressBar.classList.remove('hidden');
+            progressLbl.classList.remove('hidden');
+            const totalLotes = Math.ceil(todasAsOps.length / LOTE_TAMANHO);
+            let totalInseridos = 0;
+            let erros = 0;
+            for (let lote = 0; lote < totalLotes; lote++) {
+                const inicio = lote * LOTE_TAMANHO;
+                const fim = Math.min(inicio + LOTE_TAMANHO, todasAsOps.length);
+                const fatia = todasAsOps.slice(inicio, fim);
+                const pct = Math.round(((lote + 1) / totalLotes) * 100);
+                progressFill.style.width = pct + '%';
+                progressLbl.innerText = `Enviando lote ${lote + 1} de ${totalLotes} (${fim} de ${todasAsOps.length} OPs)...`;
+                document.getElementById('loading-text').innerText = `Importando ${todasAsOps.length} OPs...`;
+                try {
+                    const res = await jsonpRequest({
+                        action: 'importCSV',
+                        user: userLogged,
+                        data: JSON.stringify(fatia)
+                    });
+                    if (res && res.success) {
+                        totalInseridos += (res.inseridos || fatia.length);
+                    } else {
+                        erros++;
+                        console.warn('Erro no lote ' + lote, res);
+                    }
+                } catch (err) {
+                    erros++;
+                    console.error('Falha no lote ' + lote, err);
+                }
+            }
+            await loadTable6Data();
+            if (erros === 0) {
+                showMessage("Importação Concluída", `${totalInseridos} nova(s) OP(s) inserida(s) com sucesso!`);
+            } else {
+                showMessage("Importação Parcial", `${totalInseridos} OP(s) inserida(s). ${erros} lote(s) com erro — verifique o console.`);
+            }
+        }
+        ['filtro-op', 'filtro-codigo', 'filtro-setor', 'filtro-data', 'filtro-produto']
+            .forEach(id => {
+                document.getElementById(id).addEventListener('input', aplicarFiltros);
+            });
+        ['filtro-op-prod', 'filtro-codigo-prod', 'filtro-produto-prod']
+            .forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener("input", renderTabela);
+                }
+            });
+
+        async function editarPrioridade(op, codigo, setor, prioridadeAtual) {
+            const novaPrioridade = prompt(`Editar prioridade (Atual: ${prioridadeAtual})`);
+            if (!novaPrioridade) return;
+            const prioridadeNum = parseInt(novaPrioridade);
+            if (isNaN(prioridadeNum)) {
+                showMessage("Erro", "Prioridade inválida");
+                return;
+            }
+            const conflitos = globalPCPData.filter(item =>
+                item.setor === setor &&
+                parseInt(item.prioridade) === prioridadeNum
+            );
+            let modo = "manter";
+            if (conflitos.length > 0) {
+                const resposta = confirm(
+                    `Já existe prioridade ${prioridadeNum} neste setor.\n\nOK = Manter ambas\nCancelar = Reordenar prioridades`
+                );
+                modo = resposta ? "manter" : "reordenar";
+            }
+            await salvarPrioridade(op, codigo, setor, prioridadeNum, modo);
+        }
+
+        async function salvarPrioridade(op, codigo, setor, prioridade, modo) {
+            showLoading("Atualizando prioridade...");
+            try {
+                const res = await jsonpRequest({
+                    action: 'updatePrioridade',
+                    user: userLogged,
+                    op: op,
+                    codigo: codigo,
+                    setor: setor,
+                    prioridade: prioridade,
+                    modo: modo
+                });
+                if (res.success) {
+                    showMessage("Sucesso", "Prioridade atualizada!");
+                    loadTable6Data();
+                } else {
+                    showMessage("Erro", res.message || "Falha ao atualizar");
+                }
+            } catch (err) {
+                showMessage("Erro", err.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function abrirModalImpressao() {
+            preencherSetoresImpressao();
+            definirPrioridadesPadrao();
+            document.getElementById('modal-impressao').classList.remove('hidden');
+        }
+
+        function fecharModalImpressao() {
+            document.getElementById('modal-impressao').classList.add('hidden');
+        }
+
+        function confirmarImpressao() {
+            const setor = document.getElementById('imp-setor').value || "(todos)";
+            const priIni = parseInt(document.getElementById('imp-priIni').value || "0");
+            const priFim = parseInt(document.getElementById('imp-priFim').value || "100");
+            const incluirPerdas = document.getElementById('imp-perdas').checked;
+            fecharModalImpressao();
+            imprimirLista(setor, priIni, priFim, incluirPerdas);
+        }
+
+        function preencherSetoresImpressao() {
+            const select = document.getElementById('imp-setor');
+            select.innerHTML = '';
+            const setores = new Set();
+            globalPCPData.forEach(item => {
+                if (item.setor) setores.add(item.setor);
+            });
+            select.innerHTML += `<option value="(todos)">TODOS</option>`;
+            [...setores].sort().forEach(s => {
+                select.innerHTML += `<option value="${s}">${s}</option>`;
+            });
+        }
+
+        function definirPrioridadesPadrao() {
+            let prioridades = globalPCPData
+                .map(item => parseInt(item.prioridade) || 0);
+            if (prioridades.length === 0) return;
+            const min = Math.min(...prioridades);
+            const max = Math.max(...prioridades);
+            document.getElementById('imp-priIni').value = min;
+            document.getElementById('imp-priFim').value = max;
+        }
+
+        function imprimirLista(setor, priIni, priFim, incluirPerdas) {
+            let dados = globalPCPData;
+            dados = dados.filter(item => {
+                const setorOK = (setor === "(todos)") ||
+                    (item.setor && item.setor.toLowerCase() === setor.toLowerCase());
+                const prioridade = parseInt(item.prioridade) || 0;
+                const prioridadeOK = prioridade >= priIni && prioridade <= priFim;
+                let statusOK = item.status && item.status.toLowerCase().includes("produção");
+                if (incluirPerdas) {
+                    statusOK = statusOK || (item.status && item.status.toLowerCase().includes("perda"));
+                }
+                return setorOK && prioridadeOK && statusOK;
+            });
+            if (dados.length === 0) {
+                showMessage("Aviso", "Nenhum dado encontrado.");
+                return;
+            }
+            const ordensSet = new Set();
+            dados.forEach(item => {
+                if (item.op) ordensSet.add(item.op);
+            });
+            const listaOrdens = Array.from(ordensSet).join(" - ");
+            const setores = {};
+            dados.forEach(item => {
+                const s = item.setor || "SEM SETOR";
+                if (!setores[s]) setores[s] = [];
+                setores[s].push(item);
+            });
+            let html = `
+            <html>
+            <head>
+            <title>Impressão PCP</title>
+            <style>
+            @page { margin: 20mm; }
+            body {
+            font-family: Arial;
+            margin: 30;
+            }
+            .header {
+            position: fixed;
+            top: 0mm;
+            left: 10mm;
+            right: 10mm;
+            height: 60px;
+            background: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            }
+            .subheader {
+            position: fixed;
+            top: 60px; /* logo abaixo do header */
+            left: 20mm;
+            right: 20mm;
+            height: 30px;
+            background: white;
+            font-size: 12px;
+            }
+            .status {
+            font-weight: bold;
+            margin-top: 10px;
+            font-size: 12px;
+            background: #eee;
+            padding: 4px;
+            } 
+           .status-perdas {
+           color: red;
+           }
+           .conteudo {
+           margin-top: 110px;
+           }
+           .logo { height: 40px; }
+           .titulo {
+            font-weight: bold;
+            font-size: 16px;
+            }
+           .info {
+            font-size: 12px;
+            margin-bottom: 10px;
+            }
+            table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+            }
+
+            th, td {
+            border: 1px solid #000;
+            padding: 4px;
+            font-size: 11px;
+            text-align: center;
+            }
+            th { background: #ddd; }
+            .setor {
+            font-weight: bold;
+            font-size: 13px;
+            margin-top: 20px;
+            }
+
+            .page-break {
+            page-break-before: always;
+            margin-top: 90px;
+            }
+            </style>
+            </head>
+            <body>
+            <div class="header">
+            <img src="https://raw.githubusercontent.com/MLDGP1977/Bellotto/main/LOGO.png" class="logo">
+            <div class="titulo">RELATÓRIO PCP</div>
+            <div>${new Date().toLocaleDateString()}</div>
+            </div>
+            <div class="subheader">
+            <strong>ORDENS:</strong> ${listaOrdens}
+            </div>
+            <div class="conteudo">
+            `;
+            let primeiroSetor = true;
+            for (let setorNome in setores) {
+                if (!primeiroSetor) {
+                    html += `<div class="page-break"></div>`;
+                }
+                primeiroSetor = false;
+                html += `<div class="setor">SETOR: ${setorNome}</div>`;
+                let blocoProducao = [];
+                let blocoPerdas = [];
+                // PRIORIDADES
+                for (let p = 1; p <= priFim; p++) {
+                    setores[setorNome].forEach(item => {
+                        const pri = parseInt(item.prioridade) || 0;
+                        const status = (item.status || "").toLowerCase();
+                        if (pri === p && status.includes("produção")) {
+                            blocoProducao.push(item);
+                        }
+                        if (incluirPerdas && pri === p && status.includes("perda")) {
+                            blocoPerdas.push(item);
+                        }
+                    });
+                }
+                setores[setorNome].forEach(item => {
+                    const pri = parseInt(item.prioridade) || 0;
+                    const status = (item.status || "").toLowerCase();
+                    if (pri === 0 || item.prioridade === "" || item.prioridade === "-") {
+                        if (status.includes("produção")) {
+                            blocoProducao.push(item);
+                        }
+                        if (incluirPerdas && status.includes("perda")) {
+                            blocoPerdas.push(item);
+                        }
+                    }
+                });
+                if (blocoProducao.length > 0) {
+                    html += `<div class="status">PRODUÇÃO</div>`;
+                    html += `
+                    <table>
+                    <tr>
+                    <th>Código</th>
+                    <th>Produto</th>
+                    <th>Qtd</th>
+                    <th>Setor</th>
+                    <th>Prioridade</th>
+                    <th>Status</th>
+                    </tr>
+                    `;
+                    blocoProducao.forEach(item => {
+                        html += `
+                        <tr>
+                        <td>${item.codigo}</td>
+                        <td style="text-align:left">${item.produto}</td>
+                        <td>${item.qtd_pendente}</td>
+                        <td>${item.setor}</td>
+                        <td>${item.prioridade || 0}</td>
+                        <td>${item.status}</td>
+                        </tr>
+                        `;
+                    });
+                    html += `</table>`;
+                }
+                if (blocoPerdas.length > 0) {
+                    html += `<div class="status status-perdas">PERDAS</div>`;
+                    html += `
+                    <table>
+                    <tr>
+                    <th>Código</th>
+                    <th>Produto</th>
+                    <th>Qtd</th>
+                    <th>Setor</th>
+                    <th>Prioridade</th>
+                    <th>Status</th>
+                    </tr>
+                    `;
+                    blocoPerdas.forEach(item => {
+                        html += `
+                        <tr>
+                        <td>${item.codigo}</td>
+                        <td style="text-align:left">${item.produto}</td>
+                        <td>${item.qtd_pendente}</td>
+                        <td>${item.setor}</td>
+                        <td>${item.prioridade || 0}</td>
+                        <td>${item.status}</td>
+                        </tr>
+                        `;
+                    });
+                    html += `</table>`;
+                }
+            }
+            html += `
+            </div>
+            <script>
+            window.onload = function() {
+            window.focus();
+            window.print();
+            }
+            <\/script>
+            </body>
+            </html>
+           `;
+            const win = window.open('', '_blank');
+            win.document.write(html);
+            win.document.close();
+        }
+
+        function gerarLinhasColaboradores() {
+            const container = document.getElementById("colaboradores-container");
+            container.innerHTML = "";
+            for (let i = 0; i < 5; i++) {
+                const div = document.createElement("div");
+                div.className = "grid gap-2 items-center";
+                div.style.gridTemplateColumns = "1fr 120px 120px";
+                div.style.padding = "0 4px";
+                div.innerHTML = `
+                <input list="lista-colaboradores" autocomplete="off" placeholder="Nome"
+                class="border p-2 rounded text-xs colab-nome">
+                <input type="number" value="8.8"
+                class="border p-2 rounded text-xs colab-horas">
+                <input type="number" placeholder="Meta"
+                class="border p-2 rounded text-xs colab-meta">
+                `;
+                container.appendChild(div);
+            }
+        }
+
+        function preencherColaboradores(lista) {
+            const el = document.getElementById("lista-colaboradores");
+            el.innerHTML = lista.map(n => `<option value="${n}">`).join('');
+        }
+
+        let itemSelecionado = null;
+        function abrirRegistro(item) {
+            itemSelecionado = item;
+            document.getElementById("modal-producao").classList.remove("hidden");
+            const info = `OP: ${item.op} |  CÓD: ${item.codigo} | PROD: ${item.produto}`;
+            document.getElementById("info-registro").innerText = info;
+            const info1 = `SETOR: ${item.setor} | QTD PEND: ${item.qtd_pendente} `;
+            document.getElementById("info1-registro").innerText = info1;
+            const hoje = new Date().toISOString().split('T')[0];
+            document.getElementById("reg-data").value = hoje;
+            document.getElementById("reg-produzido").value = "";
+            document.getElementById("reg-perdas").value = 0;
+            gerarLinhasColaboradores();
+            const camposMeta = document.querySelectorAll("input[placeholder='Meta']");
+            camposMeta.forEach(el => el.value = item.meta || 100);
+        }
+
+        function fecharModalProducao() {
+            document.getElementById("modal-producao").classList.add("hidden");
+        }
+
+        async function salvarRegistroProducao() {
+            const btnSalvar = document.getElementById("btn-salvar-producao");
+            btnSalvar.disabled = true;
+            btnSalvar.innerText = "Salvando...";
+            btnSalvar.classList.add("opacity-50");
+            try {
+                const payload = {
+                    linha: itemSelecionado.linha,
+                    op: itemSelecionado.op,
+                    codigo: itemSelecionado.codigo,
+                    produto: itemSelecionado.produto,
+                    setor: itemSelecionado.setor,
+                    pendente: Number(itemSelecionado.qtd_pendente || 0),
+                    produzida: Number(
+                        document.getElementById("reg-produzido").value || 0
+                    ),
+                    perdas: Number(
+                        document.getElementById("reg-perdas").value || 0
+                    ),
+                    data: document.getElementById("reg-data").value,
+                    usuario: localStorage.getItem("usuario") || "Sistema",
+                    colaboradores: Array.from(
+                        document.querySelectorAll("#colaboradores-container > div")
+                    ).map(linha => {
+                        return {
+                            nome: linha.querySelector(".colab-nome")?.value || "",
+                            horas: Number(
+                                linha.querySelector(".colab-horas")?.value || 0
+                            ),
+                            meta: Number(
+                                linha.querySelector(".colab-meta")?.value || 0
+                            )
+                        };
+                    }).filter(col => col.nome.trim() !== "")
+                };
+                if (payload.colaboradores.length === 0) {
+                    alert("Preencha pelo menos um colaborador.");
+                    btnSalvar.disabled = false;
+                    btnSalvar.innerText = "Salvar";
+                    btnSalvar.classList.remove("opacity-50");
+                    return;
+                }
+                const produzido = Number(payload.produzida || 0);
+                const perdas = Number(payload.perdas || 0);
+                if ((produzido + perdas) <= 0) {
+                    alert("Informe Produzido ou Perdas.");
+                    btnSalvar.disabled = false;
+                    btnSalvar.innerText = "Salvar";
+                    btnSalvar.classList.remove("opacity-50");
+                    return;
+                }
+                if ((payload.produzida + payload.perdas) > payload.pendente) {
+                    alert(
+                        "Produção + perdas não pode ultrapassar o valor pendente."
+                    );
+                    btnSalvar.disabled = false;
+                    btnSalvar.innerText = "Salvar";
+                    btnSalvar.classList.remove("opacity-50");
+                    return;
+                }
+                const url = `${SCRIPT_URL}?action=registrarProducao&payload=${encodeURIComponent(JSON.stringify(payload))}`;
+                const response = await fetch(url);
+                const result = await response.json();
+                if (!result.success) {
+                    throw new Error(result.message);
+                }
+                if (itemSelecionado) {
+                    const qtdInformada = Number(payload.produzida || 0) + Number(payload.perdas || 0);
+                    dadosProducao = dadosProducao.map(item => {
+                        if (item.op === itemSelecionado.op && item.codigo === itemSelecionado.codigo) {
+                            let novoPendente = Number(item.qtd_pendente) - qtdInformada;
+                            item.qtd_pendente = novoPendente > 0 ? novoPendente : 0;
+                        }
+                        return item;
+                    });
+                    dadosProducao = dadosProducao.filter(item => Number(item.qtd_pendente) > 0);
+                    renderTabela();
+                    montarCardsSetores();
+                }
+                fecharModalProducao();
+                mostrarSucesso();
+                buscarDadosProducao().then(() => {
+                    renderTabela();
+                    montarCardsSetores();
+                });
+                buscarDadosCockpitSync();
+
+
+
+
+                if (payload.setor === "Embalagem") {
+                    // 1. Forçamos uma atualização da globalPCPData para garantir que o status está correto
+                    await buscarDadosCockpitSync();
+                    const itensDaOP = globalPCPData.filter(i => i.op === payload.op && i.codigo === payload.codigo);
+                    const concluida = itensDaOP.every(i => {
+                        const s = String(i.status || "").trim().toUpperCase();
+                        return s === "CONCLUÍDO" || s === "CONCLUIDO";
+                    });
+                    if (concluida) {
+                        await new Promise(resolve => setTimeout(resolve, 800));
+                        await processarSaidaCSV(payload);
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+                result.success = false;
+                result.message = err.stack;
+                alert(err.message || "Erro ao salvar produção");
+            } finally {
+                btnSalvar.disabled = false;
+                btnSalvar.innerText = "Salvar";
+                btnSalvar.classList.remove("opacity-50");
+            }
+        }
+
+        async function processarSaidaCSV(payload) {
+            const urlSaida = `${SCRIPT_URL}?action=registrarSaida&op=${payload.op}&codigo=${payload.codigo}&t=${Date.now()}`;
+            const urlDown = `${SCRIPT_URL}?action=downloadCSVParcial&op=${payload.op}&codigo=${payload.codigo}&t=${Date.now()}`;
+            try {
+                const resp = await fetch(urlSaida);
+                const json = await resp.json();
+                if (json.success) {
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    const response = await fetch(urlDown);
+                    if (!response.ok) throw new Error("Falha ao baixar arquivo");
+                    const blob = await response.blob();
+                    const urlBlob = window.URL.createObjectURL(blob);
+                    const link = document.createElement("a");
+                    link.href = urlBlob;
+                    link.download = `saida_OP${payload.op}_COD${payload.codigo}.csv`;
+                    document.body.appendChild(link);
+                    link.click();
+                    setTimeout(() => {
+                        window.URL.revokeObjectURL(urlBlob);
+                        link.remove();
+                    }, 500);
+                }
+            } catch (e) {
+                console.error("Erro no fluxo de saída:", e);
+            }
+        }
+
+        async function tratarFluxoSaida(payload) {
+            if (payload.setor !== "Embalagem") return;
+            const urlReg = `${SCRIPT_URL}?action=registrarSaida&op=${payload.op}&codigo=${payload.codigo}`;
+            const response = await fetch(urlReg);
+            const result = await response.json();
+            if (result.success && result.status === "registrado") {
+                await new Promise(r => setTimeout(r, 1000));
+                const urlDown = `${SCRIPT_URL}?action=downloadCSVParcial&op=${payload.op}&codigo=${payload.codigo}`;
+                const respFile = await fetch(urlDown);
+                const text = await respFile.text();
+                const blob = new Blob([text], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Saida_OP${payload.op}_COD${payload.codigo}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+            }
+        }
+
+        async function carregarColaboradores() {
+            try {
+                const nomes = await getColaboradores();
+                preencherDatalist("lista-colaboradores", nomes);
+            } catch (err) {
+                console.error("Erro ao carregar colaboradores:", err);
+            }
+        }
+
+        async function getColaboradores() {
+            const res = await fetch(`${SCRIPT_URL}?action=getColaboradores`);
+            const data = await res.json();
+            if (!data.success) {
+                throw new Error("Erro ao buscar colaboradores");
+            }
+            return data.colaboradores;
+        }
+
+        function preencherDatalist(id, lista) {
+            const datalist = document.getElementById(id);
+            if (!datalist) {
+                console.error("Datalist não encontrado:", id);
+                return;
+            }
+            datalist.innerHTML = "";
+            lista.forEach(nome => {
+                const option = document.createElement("option");
+                option.value = nome;
+                datalist.appendChild(option);
+            });
+        }
+
+        async function getMeta(codigo, setor) {
+            const res = await jsonpRequest({
+                action: 'getMeta',
+                codigo: codigo,
+                setor: setor
+            });
+            return res.meta || 100;
+        }
+
+        function hojeSemHora() {
+            var agora = new Date();
+            return new Date(
+                agora.getFullYear(),
+                agora.getMonth(),
+                agora.getDate()
+            );
+        }
+
+        function converterDataCSV_BR(dataStr) {
+            if (!dataStr) return "";
+            dataStr = dataStr.split(" ")[0];
+            if (dataStr.includes("-")) {
+                const [ano, mes, dia] = dataStr.split("-");
+                return `${dia}/${mes}/${ano}`;
+            }
+            const partes = dataStr.split("/");
+            if (partes.length === 3) {
+                let dia = partes[0].padStart(2, '0');
+                let mes = partes[1].padStart(2, '0');
+                let ano = partes[2];
+                if (ano.length === 2) {
+                    ano = "20" + ano;
+                }
+                return `${dia}/${mes}/${ano}`;
+            }
+            return dataStr;
+        }
+
+        function parseBRDate(dataStr) {
+            if (!dataStr) return null;
+            const partes = dataStr.split('/');
+            if (partes.length !== 3) return null;
+            let [dia, mes, ano] = partes;
+            dia = dia.padStart(2, '0');
+            mes = mes.padStart(2, '0');
+            if (ano.length === 2) {
+                ano = "20" + ano;
+            }
+            return new Date(Number(ano), Number(mes) - 1, Number(dia));
+        }
+
+        function formatarDataBR(date) {
+            const dia = String(date.getDate()).padStart(2, '0');
+            const mes = String(date.getMonth() + 1).padStart(2, '0');
+            const ano = date.getFullYear();
+            return `${dia}/${mes}/${ano}`;
+        }
+
+        function isSameDay(d1, d2) {
+            return d1.getDate() === d2.getDate() &&
+                d1.getMonth() === d2.getMonth() &&
+                d1.getFullYear() === d2.getFullYear();
+        }
+
+        function isSameWeek(d, now) {
+            const start = new Date(now);
+            start.setDate(now.getDate() - now.getDay());
+            start.setHours(0, 0, 0, 0);
+            const end = new Date(start);
+            end.setDate(start.getDate() + 6);
+
+            return d >= start && d <= end;
+        }
+
+        function isSameMonth(d, now) {
+            return d.getMonth() === now.getMonth() &&
+                d.getFullYear() === now.getFullYear();
+        }
+
+        function mostrarSucesso() {
+            const msg = document.getElementById("msg-sucesso");
+            msg.style.display = "block";
+            setTimeout(() => {
+                msg.style.display = "none";
+            }, 3000);
+        }
+
+        async function buscarDadosCockpitSync() {
+            const data = await jsonpRequest({ action: 'getPCPData' });
+            const rawList = data.producao || [];
+            const filtrado = rawList.filter(item => {
+                const s = String(item.status || "").toUpperCase();
+                return !s.includes("CONCLUÍDO") && !s.includes("CONCLUIDO");
+            });
+            globalPCPData = filtrado;
+            updateStats(globalPCPData);
+            displayTableData(globalPCPData);
+            await new Promise(r => requestAnimationFrame(r));
+        }
+
+        function ordemConcluida(lista, op, codigo) {
+            return lista
+                .filter(item => item.op === op && item.codigo === codigo)
+                .every(item => String(item.status).trim() === "Concluído");
+        }
+
+        //Acesso
+        function abrirControleAcessos() {
+            document.getElementById("main-content").classList.add("hidden");
+            document.getElementById("pcp-module").classList.add("hidden");
+            document.getElementById("tela-producao").classList.add("hidden");
+            document.getElementById("screen-acessos").classList.remove("hidden");
+            carregarUsuariosSistema();
+        }
+
+        let usuariosSistema = [];
+        async function carregarUsuariosSistema() {
+            try {
+                const res = await jsonpRequest({
+                    action: "getUsuarios"
+                });
+                if (!res.success) {
+                    console.error(res);
+                    alert("Erro ao carregar usuários");
+                    return;
+                }
+                usuariosSistema = res.usuarios || [];
+                renderizarUsuarios(usuariosSistema);
+            } catch (err) {
+                console.error(err);
+                alert("Erro de comunicação");
+            }
+        }
+
+        function renderizarUsuarios(lista) {
+            const tbody =
+                document.getElementById("tbody-usuarios");
+            tbody.innerHTML = "";
+            lista.forEach(user => {
+                const bloquearExclusao =
+                    user.login === userLogged;
+                tbody.innerHTML += `
+            <tr>
+                <td>${user.login}</td>
+                <td>${user.senha}</td>
+                <td>${user.email}</td>
+                <td>${user.tipo}</td>
+                <td class="flex gap-2">
+                    <button
+                        onclick="editarUsuario('${user.login}')"
+                        class="bg-blue-600 text-white px-2 py-1 rounded text-[10px] font-bold">
+                        Editar
+                    </button>
+                    <button
+                        onclick="deletarUsuario('${user.login}')"
+                        ${bloquearExclusao ? 'disabled' : ''}
+                        class="
+                            px-2 py-1 rounded text-[10px] font-bold text-white
+                            ${bloquearExclusao
+                        ? 'bg-gray-400 cursor-not-allowed'
+                        : 'bg-red-600'}
+                        ">
+                        Excluir
+                    </button>
+
+                </td>
+
+            </tr>
+        `;
+            });
+        }
+
+        async function salvarUsuario(e) {
+            e.preventDefault();
+            const btn =
+                document.getElementById("btn-salvar-usuario");
+            btn.disabled = true;
+            btn.innerHTML = "Salvando...";
+            const login =
+                document.getElementById('acesso-login').value.trim();
+            const senha =
+                document.getElementById('acesso-senha').value.trim();
+            const email =
+                document.getElementById('acesso-email').value.trim();
+            const tipo =
+                document.getElementById('acesso-tipo').value;
+            if (!login || !senha || !email || !tipo) {
+                alert("Preencha todos os campos");
+                btn.disabled = false;
+                btn.innerHTML = "Salvar Usuário";
+                return;
+            }
+            try {
+                const res = await jsonpRequest({
+                    action: "save_usuario",
+                    login,
+                    senha,
+                    email,
+                    tipo
+                });
+                if (res.success) {
+                    btn.innerHTML = "Salvo ✔";
+                    setTimeout(() => {
+                        document.getElementById('acesso-login').value = "";
+                        document.getElementById('acesso-senha').value = "";
+                        document.getElementById('acesso-email').value = "";
+                        document.getElementById('acesso-tipo').value = "USER";
+                        btn.disabled = false;
+                        btn.innerHTML = "Salvar Usuário";
+                    }, 800);
+                    carregarUsuariosSistema();
+                } else {
+                    alert(res.message || "Erro ao salvar");
+                    btn.disabled = false;
+                    btn.innerHTML = "Salvar Usuário";
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Erro ao salvar");
+                btn.disabled = false;
+                btn.innerHTML = "Salvar Usuário";
+            }
+        }
+
+        async function deletarUsuario(login) {
+            const confirmar =
+                confirm(`Excluir ${login}?`);
+            if (!confirmar) return;
+            try {
+                const res = await jsonpRequest({
+                    action: "delete_usuario",
+                    userTarget: login
+                });
+                if (res.success) {
+                    alert("Usuário excluído");
+                    carregarUsuariosSistema();
+                } else {
+                    alert(res.message || "Erro ao excluir");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Erro ao excluir");
+            }
+        }
+
+        function editarUsuario(login) {
+            const usuario =
+                usuariosSistema.find(u => u.login === login);
+            if (!usuario) return;
+            document.getElementById('acesso-login').value =
+                usuario.login;
+            document.getElementById('acesso-senha').value =
+                usuario.senha;
+            document.getElementById('acesso-email').value =
+                usuario.email;
+            document.getElementById('acesso-tipo').value =
+                usuario.tipo || "USER";
+        }
+
+
+
+        function voltarMenuPrincipal() {
+            document.getElementById("screen-acessos").classList.add("hidden");
+            document.getElementById("pcp-module").classList.add("hidden");
+            document.getElementById("tela-producao").classList.add("hidden");
+            document.getElementById("main-content").classList.remove("hidden");
+        }
+
+    </script>
+    <!-- MODAL DE IMPRESSÃO -->
+    <div id="modal-impressao" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white p-6 rounded shadow-xl w-full max-w-md">
+            <h2 class="text-lg font-black mb-4 uppercase">Filtros de Impressão</h2>
+            <div class="space-y-3">
+                <div>
+                    <label class="text-[10px] font-black uppercase text-gray-600">Setor</label>
+                    <select id="imp-setor" class="w-full border p-2 rounded text-xs font-bold uppercase">
+                    </select>
+                </div>
+                <div>
+                    <label class="text-[10px] font-black uppercase text-gray-600">Prioridade Inicial</label>
+                    <input id="imp-priIni" type="number" class="w-full border p-2 rounded text-xs font-bold">
+                </div>
+                <div>
+                    <label class="text-[10px] font-black uppercase text-gray-600">Prioridade Final</label>
+                    <input id="imp-priFim" type="number" class="w-full border p-2 rounded text-xs font-bold">
+                </div>
+                <label class="flex items-center gap-2 text-xs font-bold uppercase">
+                    <input type="checkbox" id="imp-perdas">
+                    Incluir Perdas
+                </label>
+            </div>
+            <div class="flex justify-end gap-2 mt-6">
+                <button onclick="fecharModalImpressao()"
+                    class="px-4 py-2 bg-gray-400 text-white font-bold rounded text-xs">
+                    Cancelar
+                </button>
+                <button onclick="confirmarImpressao()" class="px-4 py-2 bg-black text-white font-bold rounded text-xs">
+                    Imprimir
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modal Registrar Produção -->
+    <div id="modal-producao" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div class="bg-white w-full max-w-3xl rounded-lg shadow-2xl p-6">
+            <h2 class="text-xl font-black uppercase mb-2">Lançar Produção</h2>
+            <!-- LINHA PRINCIPAL -->
+            <div id="info-registro" style=" color:#0b3d91; font-weight:600; "> </div>
+            <div id="info1-registro" style=" color:#0b3d91; font-weight:600; "> </div>
+
+            <div class="grid grid-cols-3 gap-4 mb-4">
+                <div>
+                    <label class="text-xs font-bold">Data</label>
+                    <input type="date" id="reg-data" class="w-full border p-2 rounded text-xs font-bold">
+                </div>
+                <div>
+                    <label class="text-xs font-bold">Qtd Produzido</label>
+                    <input type="number" id="reg-produzido" class="w-full border p-2 rounded text-xs font-bold">
+                </div>
+                <div>
+                    <label class="text-xs font-bold">Qtd Perdas</label>
+                    <input type="number" id="reg-perdas" value="0" class="w-full border p-2 rounded text-xs font-bold">
+                </div>
+            </div>
+            <!-- COLABORADORES -->
+            <div
+                style="display: grid; grid-template-columns: 1fr 120px 120px; gap: 10px; font-weight: bold; margin-bottom: 8px; padding: 0 4px;">
+                <div class="text-xs font-bold">Colaborador</div>
+                <div class="text-xs font-bold">Horas</div>
+                <div class="text-xs font-bold">Meta</div>
+            </div>
+            <div id="colaboradores-container" class="space-y-2"></div>
+            <!-- BOTÕES -->
+            <div class="flex justify-end gap-2 mt-6">
+                <button onclick="fecharModalProducao()"
+                    class="px-4 py-2 bg-gray-300 rounded text-xs font-bold">Cancelar</button>
+                <button id="btn-salvar-producao" onclick="salvarRegistroProducao()"
+                    class="px-4 py-2 bg-green-600 text-white rounded text-xs font-black">
+                    Salvar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <body>
+        <div id="app"></div>
+        <div id="modal-producao"></div>
+        <div id="msg-sucesso" style="
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #16a34a;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 6px;
+        display: none;
+        z-index: 9999;
+    ">
+            Registro salvo com sucesso!
+        </div>
+    </body>
+
+</html>
