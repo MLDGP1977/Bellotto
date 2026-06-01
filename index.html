@@ -607,7 +607,7 @@
             border: none;
             padding: 10px 16px;
             border-radius: 10px;
-            background: #111827;
+            background: #344d81;
             color: white;
             font-weight: 800;
             cursor: pointer;
@@ -737,7 +737,7 @@
                     </div>
                 </div>
             </div>
-            <div class="btn-box" onclick="showMessage('Em desenvolvimento', 'Esta área estará disponível em breve.')">
+            <div class="btn-box" onclick="abrirTelaParadas()">
                 <div class="outer-rim c-stop">
                     <div class="screw s1"></div>
                     <div class="screw s2"></div>
@@ -787,8 +787,8 @@
                 </div>
             </div>
             <div style="display:flex; gap:10px;">
-                <button onclick="voltarMenuPrincipal()" class="action-btn">
-                    ← Menu
+                <button onclick="backToHome()" class="action-btn">
+                    ← Voltar Menu
                 </button>
             </div>
         </header>
@@ -839,13 +839,35 @@
 
     <!-- Cockpit-->
     <div id="pcp-module" class="hidden p-6">
+        <!-- HEADER -->
+        <header>
+            <div style="display:flex; align-items:center; gap:15px;">
+                <img src="https://raw.githubusercontent.com/MLDGP1977/Bellotto/main/LOGO.png"
+                    class="h-12 bg-white p-1 rounded shadow-sm" style="height:50px;">
+                <div>
+                    <div style="font-size:22px; font-weight:900; font-style:italic;">
+                        MONITORAMENTO PCP
+                    </div>
+                    <div style="
+                    font-size:10px;
+                    color:#2a8352;
+                    font-weight:900;
+                    letter-spacing:3px;
+                    text-transform:uppercase;
+                ">
+                        Cockpit Planejamento
+                    </div>
+                </div>
+            </div>
+            <div style="display:flex; gap:10px;">
+                <button onclick="backToHome()" class="action-btn">
+                    ← Voltar Menu
+                </button>
+            </div>
+        </header>
         <div class="max-w-[1400px] mx-auto">
             <div class="flex flex-col lg:flex-row justify-between lg:items-end gap-4 mb-6">
                 <div>
-                    <button onclick="backToHome()"
-                        class="text-[10px] font-black text-gray-500 hover:text-black uppercase tracking-widest mb-1 flex items-center">
-                        <i class="fas fa-arrow-left mr-2"></i> Voltar ao Menu
-                    </button>
                     <h2 class="text-3xl font-black uppercase tracking-tighter text-zinc-800">Cockpit de Planejamento
                     </h2>
                 </div>
@@ -985,12 +1007,34 @@
     </div>
     <!-- Tela Produção -->
     <div id="tela-producao" class="hidden p-6">
+        <!-- HEADER -->
+        <header>
+            <div style="display:flex; align-items:center; gap:15px;">
+                <img src="https://raw.githubusercontent.com/MLDGP1977/Bellotto/main/LOGO.png"
+                    class="h-12 bg-white p-1 rounded shadow-sm" style="height:50px;">
+                <div>
+                    <div style="font-size:22px; font-weight:900; font-style:italic;">
+                        MONITORAMENTO PCP
+                    </div>
+                    <div style="
+                    font-size:10px;
+                    color:#434ca1;
+                    font-weight:900;
+                    letter-spacing:3px;
+                    text-transform:uppercase;
+                ">
+                        Controle de Produção
+                    </div>
+                </div>
+            </div>
+            <div style="display:flex; gap:10px;">
+                <button onclick="backToHome()" class="action-btn">
+                    ← Voltar Menu
+                </button>
+            </div>
+        </header>
         <div class="max-w-[1400px] mx-auto">
             <div>
-                <button onclick="backToHome()"
-                    class="text-[10px] font-black text-gray-500 hover:text-black uppercase tracking-widest mb-1 flex items-center">
-                    <i class="fas fa-arrow-left mr-2"></i> Voltar ao Menu
-                </button>
                 <h2 class="text-3xl font-black uppercase tracking-tighter text-zinc-800 mb-2">Lançar
                     Produção
                 </h2>
@@ -1060,8 +1104,132 @@
             </div>
         </div>
     </div>
-    <script>
 
+    <!-- Tela Paradas -->
+    <div id="tela-paradas" class="hidden p-6">
+        <!-- HEADER -->
+        <header>
+            <div style="display:flex; align-items:center; gap:15px;">
+                <img src="https://raw.githubusercontent.com/MLDGP1977/Bellotto/main/LOGO.png"
+                    class="h-12 bg-white p-1 rounded shadow-sm" style="height:50px;">
+                <div>
+                    <div style="font-size:22px; font-weight:900; font-style:italic;">
+                        MONITORAMENTO PCP
+                    </div>
+                    <div style="
+                    font-size:10px;
+                    color:#812a2a;
+                    font-weight:900;
+                    letter-spacing:3px;
+                    text-transform:uppercase;
+                ">
+                        Registro de Paradas
+                    </div>
+                </div>
+            </div>
+            <div style="display:flex; gap:10px;">
+                <button onclick="backToHome()" class="action-btn">
+                    ← Voltar Menu
+                </button>
+            </div>
+        </header>
+        <div class="max-w-[1400px] mx-auto">
+            <h2 class="text-3xl font-black uppercase tracking-tighter text-zinc-800 mb-6">
+                Registrar Parada
+            </h2>
+            <div class="bg-white p-6 rounded shadow">
+                <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                    <h3 class="font-black uppercase text-sm text-gray-700 mb-4">
+                        Dados da Ocorrência
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-gray-600 mb-1">
+                                Selecionar Setor
+                            </label>
+                            <select id="parada-setor" class="w-full border p-2 rounded">
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-gray-600 mb-1">
+                                Data da Ocorrência
+                            </label>
+                            <input type="date" id="parada-data" class="w-full border p-2 rounded">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-gray-600 mb-1">
+                                Dias Úteis
+                            </label>
+                            <input type="number" id="parada-dias-uteis" class="w-full border p-2 rounded">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-gray-600 mb-1">
+                                Horas Disponíveis
+                            </label>
+                            <input type="number" id="parada-horas-disponiveis" step="0.01"
+                                class="w-full border p-2 rounded">
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                    <h3 class="font-black uppercase text-sm text-gray-700 mb-4">
+                        Informações da Parada
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-gray-600 mb-1">
+                                Horas Paradas
+                            </label>
+                            <input type="time" id="parada-horas" value="00:00" min="00:00" max="08:48" step="60"
+                                class="w-full border p-2 rounded">
+                        </div>
+                        <div class="md:col-span-3">
+                            <label class="block text-xs font-bold uppercase text-gray-600 mb-1">
+                                Motivo
+                            </label>
+                            <input type="text" id="parada-motivo" placeholder="Descreva o motivo da parada"
+                                class="w-full border p-2 rounded">
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <h3 class="font-black uppercase text-sm text-gray-700 mb-4">
+                        Colaboradores Afetados
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <select id="col1" class="border p-2 rounded">
+                            <option value="">Selecione...</option>
+                        </select>
+                        <select id="col2" class="border p-2 rounded">
+                            <option value="">Selecione...</option>
+                        </select>
+                        <select id="col3" class="border p-2 rounded">
+                            <option value="">Selecione...</option>
+                        </select>
+                        <select id="col4" class="border p-2 rounded">
+                            <option value="">Selecione...</option>
+                        </select>
+                        <select id="col5" class="border p-2 rounded">
+                            <option value="">Selecione...</option>
+                        </select>
+                        <select id="col6" class="border p-2 rounded">
+                            <option value="">Selecione...</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-end">
+                    <button id="btn-registrar-parada" onclick="registrarParada()"
+                        class="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-8 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 font-black uppercase tracking-wider flex items-center gap-3">
+                        <i class="fas fa-stop-circle"></i>
+                        Registrar Parada
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz84M2hcdGNkaXjD3HAJw6Q_kY2gM8uJp-kQAMsqMM9FImLWaAxSeXk7e2pmXH1CW8/exec';
         const LOTE_TAMANHO = 10;
         let userLogged = "";
@@ -1292,16 +1460,17 @@
         }
 
         function abrirRegistroProducao() {
-            document.getElementById("menu-grid").classList.add("hidden");
+            document.getElementById("main-content").classList.add("hidden");
             document.getElementById("tela-producao").classList.remove("hidden");
             carregarColaboradores();
             buscarDadosProducao();
+            limparFiltrosProducao();
             setInterval(buscarDadosProducao, 15000);
         }
 
         function voltarMenu() {
             document.getElementById("tela-producao").classList.add("hidden");
-            document.getElementById("menu-grid").classList.remove("hidden");
+            document.getElementById("Main").classList.remove("hidden");
             setorSelecionado = null;
             document.getElementById("filtro-busca").value = "";
             document.querySelector("#tabela-producao tbody").innerHTML = "";
@@ -1609,7 +1778,7 @@
 
         function navigateTo(mod) {
             if (mod === 'pcp') {
-                document.getElementById('menu-grid').classList.add('hidden');
+                document.getElementById('main-content').classList.add('hidden');
                 document.getElementById('pcp-module').classList.remove('hidden');
                 loadTable6Data();
                 abrirCockpit();
@@ -1618,8 +1787,10 @@
 
         function backToHome() {
             document.getElementById('pcp-module').classList.add('hidden');
-            document.getElementById('menu-grid').classList.remove('hidden');
+            document.getElementById('main-content').classList.remove('hidden');
             document.getElementById('tela-producao').classList.add('hidden');
+            document.getElementById("screen-acessos").classList.add("hidden");
+            document.getElementById("tela-paradas").classList.add("hidden");
             limparFiltros();
             limparFiltrosProducao();
             setorSelecionado = null;
@@ -1777,7 +1948,6 @@
                 const matchProd = !produto || String(item.produto).toLowerCase().includes(produto);
                 let matchData = true;
                 if (data) {
-                    // Converte dd/MM/yy → yyyy-MM-dd
                     if (item.data) {
                         const partes = item.data.split('/');
 
@@ -2480,14 +2650,15 @@
             }
         }
 
-        async function carregarColaboradores() {
-            try {
-                const nomes = await getColaboradores();
-                preencherDatalist("lista-colaboradores", nomes);
-            } catch (err) {
-                console.error("Erro ao carregar colaboradores:", err);
-            }
-        }
+async function carregarColaboradores() {
+    try {
+        const nomes = await getColaboradores();
+        nomes.sort((a, b) => a.localeCompare(b, 'pt-BR'));
+        preencherDatalist("lista-colaboradores", nomes);
+    } catch (err) {
+        console.error("Erro ao carregar colaboradores:", err);
+    }
+}
 
         async function getColaboradores() {
             const res = await fetch(`${SCRIPT_URL}?action=getColaboradores`);
@@ -2771,14 +2942,129 @@
                 usuario.tipo || "USER";
         }
 
-
-
         function voltarMenuPrincipal() {
             document.getElementById("screen-acessos").classList.add("hidden");
             document.getElementById("pcp-module").classList.add("hidden");
             document.getElementById("tela-producao").classList.add("hidden");
             document.getElementById("main-content").classList.remove("hidden");
         }
+
+        //Paradas
+        async function carregarColaboradoresParada() {
+            const res = await jsonpRequest({ action: 'getColaboradores' });
+            const colaboradores = (res.colaboradores || []).sort();
+            for (let i = 1; i <= 6; i++) {
+                const select = document.getElementById(`col${i}`);
+                select.innerHTML = '<option value="">Selecione...</option>';
+                colaboradores.forEach(nome => {
+                    const option = document.createElement('option');
+                    option.value = nome;
+                    option.textContent = nome;
+                    select.appendChild(option);
+                });
+            }
+        }
+
+        function abrirTelaParadas() {
+            document.getElementById('tela-paradas').classList.remove('hidden');
+            document.getElementById("screen-acessos").classList.add("hidden");
+            document.getElementById("pcp-module").classList.add("hidden");
+            document.getElementById("tela-producao").classList.add("hidden");
+            document.getElementById("main-content").classList.add("hidden");
+            document.getElementById('parada-dias-uteis').value = 22;
+            document.getElementById('parada-horas-disponiveis').value = 8.8;
+            const hoje = new Date();
+            document.getElementById('parada-data').value = hoje.toISOString().split('T')[0];
+            document.getElementById('parada-horas').value = '00:00';
+            carregarSetoresParada();
+            carregarColaboradoresParada();
+        }
+
+        let salvandoParada = false;
+        async function registrarParada() {
+            if (salvandoParada) return;
+            salvandoParada = true;
+            const btn = document.getElementById("btn-registrar-parada");
+            if (btn) {
+                btn.disabled = true;
+                btn.innerText = "Registrando...";
+            }
+            try {
+                const data = document.getElementById('parada-data').value;
+                const setor = document.getElementById('parada-setor').value;
+                const diasUteis = document.getElementById('parada-dias-uteis').value;
+                const horasDisponiveis = document.getElementById('parada-horas-disponiveis').value;
+                const horasParadas = document.getElementById('parada-horas').value;
+                const motivo = document.getElementById('parada-motivo').value.trim();
+                const colaboradores = [];
+                for (let i = 1; i <= 6; i++) {
+                    const nome = document.getElementById(`col${i}`).value.trim();
+                    if (nome && !colaboradores.includes(nome)
+                    ) { colaboradores.push(nome); }
+                }
+                if (!data) return showMessage("Atenção", "Informe a Data da Ocorrência.");
+                if (!setor) return showMessage("Atenção", "Selecione o Setor.");
+                if (!diasUteis) return showMessage("Atenção", "Informe os Dias Úteis.");
+                if (!horasDisponiveis) return showMessage("Atenção", "Informe as Horas Disponíveis.");
+                if (!horasParadas || horasParadas === "00:00") return showMessage("Atenção", "Horas Paradas deve ser maior que 00:00.");
+                if (!motivo) return showMessage("Atenção", "Informe o Motivo da Parada.");
+                if (colaboradores.length === 0) return showMessage("Atenção", "Selecione ao menos um colaborador.");
+                const payload = { data, setor, diasUteis, horasDisponiveis, horasParadas, motivo, colaboradores };
+                const res = await jsonpRequest({
+                    action: 'registrarParada',
+                    payload: JSON.stringify(payload)
+                });
+
+                if (res.success) {
+                    showMessage("Sucesso", "Parada registrada com sucesso!");
+                    resetFormularioParada();
+                } else {
+                    showMessage("Erro", res.message || "Falha ao registrar parada.");
+                }
+            } catch (err) {
+                console.error(err);
+                showMessage("Erro", "Erro inesperado ao registrar parada.");
+            } finally {
+                salvandoParada = false;
+                const btn = document.getElementById("btn-registrar-parada");
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerText = "Registrar Parada";
+                }
+            }
+        }
+
+        async function carregarSetoresParada() {
+            const res = await jsonpRequest({ action: 'getSetores' });
+            const select = document.getElementById('parada-setor');
+            select.innerHTML =
+                '<option value="">Selecione o setor...</option>';
+            (res.setores || [])
+                .forEach(setor => {
+                    select.innerHTML += `
+                <option value="${setor}">
+                    ${setor}
+                </option>
+            `;
+                });
+        }
+
+        function resetFormularioParada() {
+            document.getElementById("parada-setor").value = "";
+            const hoje = new Date();
+            const yyyy = hoje.getFullYear();
+            const mm = String(hoje.getMonth() + 1).padStart(2, "0");
+            const dd = String(hoje.getDate()).padStart(2, "0");
+            document.getElementById("parada-data").value = `${yyyy}-${mm}-${dd}`;
+            document.getElementById("parada-dias-uteis").value = "22";
+            document.getElementById("parada-horas-disponiveis").value = "8.8";
+            document.getElementById("parada-horas").value = "00:00";
+            document.getElementById("parada-motivo").value = "";
+            for (let i = 1; i <= 6; i++) {
+                document.getElementById(`col${i}`).value = "";
+            }
+        }
+
 
     </script>
     <!-- MODAL DE IMPRESSÃO -->
